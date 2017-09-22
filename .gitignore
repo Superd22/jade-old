@@ -42,4 +42,4 @@ testem.log
 Thumbs.db
 
 # Sensitive
-common/config/*.conf.ts
+*.conf.ts

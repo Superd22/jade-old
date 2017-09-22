@@ -1,0 +1,1 @@
+export type ISCGameMode = "star-citizen" | "arena-commander" | "star-marine";
