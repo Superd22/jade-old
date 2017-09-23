@@ -4,8 +4,13 @@ import {JsonController, Param, Body, Get, Post, Put, Delete} from "routing-contr
 export class SCGameRoomController {
 
     @Get("/")
-    getAll() {
-       return "This action returns all users";
+    public getAll() {
+       return "This action returns all rooms";
+    }
+
+    @Put("/Create/")
+    public createRoom() {
+        
     }
 
 }

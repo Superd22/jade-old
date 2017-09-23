@@ -1,7 +1,8 @@
+import { UserRegisterService } from './services/user-register.service';
 import { SCGameRoomTextMessageEntity } from './entity/star-citizen/game-room-text-message.entity';
 import { JadeUserEntity } from './entity/user/jade-user.entity';
 import { SCGameRoomEntity } from './entity/star-citizen/game-room.entity';
-import { createExpressServer } from "routing-controllers";
+import { createExpressServer, useContainer, Action } from "routing-controllers";
 import { DbService } from './services/db.service';
 /**
  * Main server wrapper for Jade
@@ -30,9 +31,14 @@ async function a() {
     m.content = "hello world!";
     room.texts = [m];
 
+    useContainer(Container);
     const app = createExpressServer({
+        currentUserChecker: async (action: Action) => {
+            const token = action.request.headers['X-Jade-Token'];
+            return await Container.get(UserRegisterService).findUserFromToken(token);
+        },
         controllers: [
-            __dirname + "/controllers/**/**.ts"
+        __dirname + "/controllers/**/**.ts"
         ]
     }).listen(3001);
 

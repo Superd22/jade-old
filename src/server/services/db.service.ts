@@ -1,6 +1,6 @@
 import { JadeMysqlConfig } from './../../common/config/mysql.conf';
-import { Service } from "typedi";
-import { createConnection, Connection } from "typeorm";
+import { Service, Container, ObjectType } from "typedi";
+import { createConnection, Connection, useContainer } from "typeorm";
 import { ReplaySubject } from "rxjs";
 
 
@@ -16,8 +16,15 @@ export class DbService {
     public get connectionSubject(): ReplaySubject<Connection> { return this._connectionSub; }
     /** async active connection object */
     public get connection(): Promise<Connection> { return this.connectionSubject.asObservable().first().toPromise(); }
-    
+
+    private _co: Connection;
+
+    public repo<T>(target: ObjectType<T> | string) {
+        return this._co.getRepository(target);
+    }
+
     public constructor() {
+        useContainer(Container);
         createConnection({
             type: "mysql",
             host: JadeMysqlConfig.host,
@@ -30,10 +37,10 @@ export class DbService {
             ],
             autoSchemaSync: true,
         }).then(connection => {
+            this._co = connection;
             this._connectionSub.next(connection);
         }).catch(error => console.log(error));
     }
-
 
 
 }

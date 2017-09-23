@@ -17,4 +17,7 @@ export class JadeUserEntity implements IJadeUser {
     @Column("varchar")
     @Index({ unique: true })
     discordId: string = "";
+
+    @Column("varchar")
+    scfr_token:string = "";
 }
