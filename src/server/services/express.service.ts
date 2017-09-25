@@ -17,7 +17,9 @@ export class ExpressService {
         this._expressServer = createExpressServer({
             currentUserChecker: async (action: Action) => {
                 const token = action.request.headers[xJadeToken];
-                console.log(token, action.request.headers);
+                
+                console.log("token", token);
+
                 return await Container.get(UserRegisterService).findUserFromToken(token);
             },
             controllers: [

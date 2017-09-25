@@ -30,20 +30,17 @@ export class APIIdentifyController {
             'code': code,
         };
 
-        console.log(opts);
 
         return new Promise((resolve, reject) => {
-            console.log(this.getApiUrl(provider));
             unirest.post(this.getApiUrl(provider)).headers({ "Content-Type": "x-www-form-urlencoded" })
-            .type('form').send(opts).end((response) => {
-                console.log(response.body);
-                resolve(response.body);
-            });
+                .type('form').send(opts).end((response) => {
+                    resolve(response.body);
+                });
         });
 
     }
 
-    
+
     private getApiUrl(provider: oAuthProviders): string {
         switch (provider) {
             case "discord": return "https://discordapp.com/api/oauth2/token";

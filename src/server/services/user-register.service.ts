@@ -27,7 +27,9 @@ export class UserRegisterService {
     public async findUserFromToken(token: string): Promise<IJadeUser> {
         let payload = this.getTokenData(token);
 
-        if (payload) {
+        console.log("payload", payload);
+
+        if (payload && payload.jadeUserId > -1) {
             return await this.db.repo(JadeUserEntity).findOneById(payload.jadeUserId);
         }
 
@@ -48,7 +50,6 @@ export class UserRegisterService {
             payload = null;
         }
 
-        console.log("decoded", payload);
         return payload;
     }
 
@@ -73,7 +74,6 @@ export class UserRegisterService {
             }
 
             // Whoever used this handle before didn't bother to auth, so we can assume you're the same guy.
-
             return userWithHandle;
         }
 

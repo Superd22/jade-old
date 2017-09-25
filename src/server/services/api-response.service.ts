@@ -26,8 +26,7 @@ export class APIResponse {
      * @param user the user we want the token to reflect
      */
     public static setTokenUser(res: Response, user: IJadeUser): IJadeToken {
-        console.log("user", user);
-        const newToken: IJadeToken = { jadeUserId: user.id >= 0 ? user.id : -1};
+        const newToken: IJadeToken = { jadeUserId: user.id >= 0 ? user.id : -1, jadeUser: user };
         res.setHeader(xJadeToken, APIResponse.buildToken(newToken));
 
         return newToken;
@@ -38,7 +37,6 @@ export class APIResponse {
      * @param token 
      */
     private static buildToken(token: IJadeToken): string {
-        console.log("packet", token);
         return jwt.sign(token, JWTSecret);
     }
 }

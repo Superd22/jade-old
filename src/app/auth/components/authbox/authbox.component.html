@@ -1,3 +1,24 @@
-<p>
-  authbox works!
-</p>
+<md-card>
+  <md-card-header>
+    <img md-card-avatar [src]="currentImage">
+    <md-card-title>
+      <md-form-field>
+        <input mdInput type="text" placeholder="Handle" [(ngModel)]="currentHandle">
+      </md-form-field>
+      <button md-button (click)="goHandle()" *ngIf="currentHandle">
+        {{ currentIdent?.rsiHandle ? (currentIdent?.rsiHandle != currentHandle ? "Changer de handle" : "") : (!currentDossier ? "Renseigner mon handle" : "Chercher à nouveau") }}
+      
+      </button>
+      <button md-raised-button color="primary" (click)="confirmHandle()" *ngIf="currentDossier">Confirmer ce handle</button>
+    </md-card-title>
+  </md-card-header>
+  <md-card-actions>
+    <button md-button>Se connecter avec SC.FR</button>
+    <button md-button>Se connecter avec Discord</button>
+  </md-card-actions>
+</md-card>
+
+
+<div *ngIf="currentDossier">
+  currentDossier {{currentDossier.id}} {{currentDossier.monicker}}
+</div>

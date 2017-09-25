@@ -4,7 +4,9 @@ export interface IJadeUser {
     /** rsi unique handle identifier */
     rsiHandle: string;
     /** scfr forum unique id */
-    scfrId: number,
+    scfrId: number;
     /** discord snowflake id */
     discordId: string;
+    /** rsi avatar image */
+    rsiAvatar:string;
 }

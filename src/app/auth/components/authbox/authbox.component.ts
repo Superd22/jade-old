@@ -1,3 +1,8 @@
+import { IJadeUser } from './../../../../common/interfaces/User/jadeUser.interface';
+import { IJadeToken } from './../../../../common/interfaces/jade-token';
+import { RsiApiService, IRSIDossierSummary } from './../../../common/services/rsi-api.service';
+import { JadeApiService } from './../../../common/services/jade-api.service';
+import { IdentifyService } from './../../services/identify.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -7,9 +12,52 @@ import { Component, OnInit } from '@angular/core';
 })
 export class AuthboxComponent implements OnInit {
 
-  constructor() { }
+  /** current handle for the user */
+  public currentHandle: string;
+  /** current RSI profile info for the user */
+  public currentDossier: IRSIDossierSummary;
+  /** current authed user */
+  public currentIdent: IJadeUser;
 
-  ngOnInit() {
+  public get currentImage(): string {
+    return this.currentDossier && this.currentDossier.avatar ? this.currentDossier.avatar : this.currentIdent && this.currentIdent.rsiAvatar ? this.currentIdent.rsiAvatar : "assets/images/no-avatar.jpg";
   }
 
+  constructor(protected identify: IdentifyService, protected api: JadeApiService, private rsi: RsiApiService) {
+
+
+    // Every time we change token we wanna check a few thingies.
+    identify.jadeIdentifySubject.filter((token) => Boolean(token)).subscribe((token) => {
+      this.currentIdent = token.jadeUser;
+      this.currentHandle = token.jadeUser.rsiHandle;
+      this.currentDossier = null;
+    });
+
+
+  }
+
+  ngOnInit() {
+    // Check our identity
+    this.api.get("identify/").subscribe();
+  }
+
+  /**
+   * Fetch a new handle from RSI
+   */
+  public goHandle() {
+    this.rsi.getDossierOf(this.currentHandle).subscribe((data) => {
+      this.currentDossier = data;
+    });
+  }
+
+  /**
+   * Confirm the selected handle as our handle
+   */
+  public confirmHandle() {
+    if (!this.currentDossier) return;
+
+    this.api.patch("identify/handle", { handle: this.currentDossier.handle, avatar: this.currentDossier.avatar }).subscribe((data) => {
+      console.log(data);
+    });
+  }
 }

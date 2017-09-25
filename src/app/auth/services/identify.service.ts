@@ -21,7 +21,7 @@ export class IdentifyService {
   /** if we're in anon mode or we have an identity */
   public get isAnonymous(): boolean { return this._isAnonymous; }
 
-  constructor(protected jadeApi: JadeApiService) {
+  constructor() {
     this.syncState();
   }
 
@@ -57,7 +57,7 @@ export class IdentifyService {
    * @param handle the rsi handle we want 
    */
   public trySetHandle(handle: string) {
-    this.jadeApi.get()
+    //this.jadeApi.get()
   }
 
 }

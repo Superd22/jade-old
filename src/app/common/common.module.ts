@@ -1,3 +1,5 @@
+import { RsiApiService } from './services/rsi-api.service';
+import { JadeApiService } from './services/jade-api.service';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -5,6 +7,7 @@ import { CommonModule } from '@angular/common';
   imports: [
     CommonModule
   ],
+  providers: [JadeApiService, RsiApiService],
   declarations: []
 })
-export class CommonModule { }
+export class JadeCommonModule { }

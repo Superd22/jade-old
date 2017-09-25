@@ -1,13 +1,13 @@
-export interface IJadeAPIResponse {
+export interface IJadeAPIResponse<T = any> {
     error: boolean;
-    data: any;
+    data: T;
     msg: string;
 }
 
-export interface IJadeAPIResponseSuccess extends IJadeAPIResponse {
+export interface IJadeAPIResponseSuccess<T = any> extends IJadeAPIResponse<T> {
     error: false;
 }
 
-export interface IJadeAPIResponseError extends IJadeAPIResponse {
+export interface IJadeAPIResponseError<T = any> extends IJadeAPIResponse<T> {
     error: true;
 }

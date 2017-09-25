@@ -8,6 +8,8 @@ import { TestShared } from './_.shared';
 import * as jwt from 'jsonwebtoken';
 
 
+
+
 TestShared.commonSetUp();
 describe("/identify", () => {
 
@@ -72,17 +74,37 @@ describe("/identify", () => {
             // Check we have no error
             TestShared.apiNoError(response.body);
 
-            console.log(response.status);
-
             // Check we're now an authed user
             const newUserId = Number(TestShared.getReturnData(response.body)['id']);
-            console.log(newUserId);
+            
             expect(newUserId).toBeGreaterThan(-1);
             expect(newUserId).toBe(jwt.decode(response.header[xJadeToken])['jadeUserId']);
 
             // Remove this placeholder user from the db
             await Container.get(DbService).repo(JadeUserEntity).removeById(newUserId);
             
+            done();
+        });
+
+        it("Should authenticate as the user X who own that handle if X hasn't protected it", async (done) => {
+
+            // Create a mock user in db
+            const user = new JadeUserEntity();
+            user.rsiHandle = String(Math.floor(Math.random() * 9e15));
+            await Container.get(DbService).repo(JadeUserEntity).persist(user);
+
+            // Call the api
+            const response = await TestBootStrap.api.patch("/identify/handle").query({ handle: user.rsiHandle });
+
+            // Check everything
+            TestShared.apiNoError(response.body);
+            const newUserId = Number(TestShared.getReturnData(response.body)['id']);
+            expect(newUserId).toBeGreaterThan(-1);
+            expect(newUserId).toBe(jwt.decode(response.header[xJadeToken])['jadeUserId']);
+
+            // We don't need you anymore.
+            await Container.get(DbService).repo(JadeUserEntity).remove(user);
+
             done();
         });
     });

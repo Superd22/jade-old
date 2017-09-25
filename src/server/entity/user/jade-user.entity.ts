@@ -1,6 +1,7 @@
+import { JadeLFGUserEntity } from './../star-citizen/lfg-user.entity';
 import { JadeUserAuthEntity } from './jade-user-auth.entity';
 import { IJadeUser } from '../../../common/interfaces/User/jadeUser.interface';
-import { Entity, PrimaryGeneratedColumn, Column, Index, OneToOne, JoinColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, Index, OneToOne, JoinColumn, OneToMany } from "typeorm";
 
 @Entity()
 export class JadeUserEntity implements IJadeUser {
@@ -19,7 +20,16 @@ export class JadeUserEntity implements IJadeUser {
     @Index()
     discordId: string = "";
 
-    @OneToOne(type => JadeUserAuthEntity, auth => auth.user)
+    @Column("varchar")
+    rsiAvatar: string = "";
+
+    @OneToOne(type => JadeUserAuthEntity, auth => auth.user, { cascadeAll: true })
     @JoinColumn()
     auth: JadeUserAuthEntity = null;
+
+    @OneToOne(type => JadeLFGUserEntity, lfg => lfg.user, { cascadeAll: true })
+    @JoinColumn()
+    lfg: JadeLFGUserEntity = null;
+
+
 }

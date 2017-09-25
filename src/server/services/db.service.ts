@@ -37,7 +37,6 @@ export class DbService {
             autoSchemaSync: true,
         }).then(connection => {
             this._co = connection;
-            console.log("coooo");
             this._connectionSub.next(connection);
         }).catch(error => console.log(error));
     }
