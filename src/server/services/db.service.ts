@@ -24,7 +24,6 @@ export class DbService {
     }
 
     public constructor() {
-        useContainer(Container);
         createConnection({
             type: "mysql",
             host: JadeMysqlConfig.host,
@@ -38,6 +37,7 @@ export class DbService {
             autoSchemaSync: true,
         }).then(connection => {
             this._co = connection;
+            console.log("coooo");
             this._connectionSub.next(connection);
         }).catch(error => console.log(error));
     }

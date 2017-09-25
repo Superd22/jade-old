@@ -7,7 +7,7 @@ export abstract class OauthService {
   /** the app client id for the target */
   protected abstract client_id;
   protected abstract api_url: string;
-  protected abstract scope: string = "identify";
+  protected scope: string = "identify";
 
   protected http: HttpClient;
 

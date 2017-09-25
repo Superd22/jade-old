@@ -16,6 +16,11 @@ export class APIIdentifyController {
         return APIResponse.send(await this.getTokenFromCode(provider, code));
     }
 
+    /**
+     * Gets an auth code from the front-end, and fetches for a token
+     * @param provider the provider this code came frome
+     * @param code the code we got 
+     */
     public async getTokenFromCode(provider: oAuthProviders, code: string) {
         const opts = {
             'client_id': OAuthCrendetials[provider][0],
@@ -38,6 +43,7 @@ export class APIIdentifyController {
 
     }
 
+    
     private getApiUrl(provider: oAuthProviders): string {
         switch (provider) {
             case "discord": return "https://discordapp.com/api/oauth2/token";

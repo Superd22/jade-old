@@ -1,5 +1,6 @@
+import { JadeUserAuthEntity } from './jade-user-auth.entity';
 import { IJadeUser } from '../../../common/interfaces/User/jadeUser.interface';
-import { Entity, PrimaryGeneratedColumn, Column, Index } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, Index, OneToOne, JoinColumn } from "typeorm";
 
 @Entity()
 export class JadeUserEntity implements IJadeUser {
@@ -7,7 +8,7 @@ export class JadeUserEntity implements IJadeUser {
     id: number;
 
     @Column("int")
-    @Index({ unique: true })
+    @Index()
     scfrId: number = 0;
 
     @Index({ unique: true })
@@ -15,9 +16,10 @@ export class JadeUserEntity implements IJadeUser {
     rsiHandle: string = "";
 
     @Column("varchar")
-    @Index({ unique: true })
+    @Index()
     discordId: string = "";
 
-    @Column("varchar")
-    scfr_token:string = "";
+    @OneToOne(type => JadeUserAuthEntity, auth => auth.user)
+    @JoinColumn()
+    auth: JadeUserAuthEntity = null;
 }

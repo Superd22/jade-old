@@ -4,7 +4,7 @@ import { IJadeToken } from './../../common/interfaces/jade-token';
 import { JWTSecret } from './../config/jwt.config';
 import { DbService } from './db.service';
 import { JadeMysqlConfig } from './../../common/config/mysql.conf';
-import { Service } from "typedi";
+import { Service, Inject, Container } from "typedi";
 import { createConnection, Connection } from "typeorm";
 import { ReplaySubject } from "rxjs";
 import * as jwt from "jsonwebtoken";
@@ -14,16 +14,10 @@ import { Observable } from 'rxjs/Observable';
  * Used to register users 
  */
 @Service()
-export class UserRegisterService {
+export class UserRegisterService {    
+    private db: DbService = Container.get(DbService);
 
-    public constructor(private db: DbService) { }
-
-    /**
-     * Checks the current request to see if we find 
-     */
-    public findRequestInfo() {
-
-    }
+    public constructor() { }
 
     /**
      * Computes the current user from a token
@@ -37,7 +31,7 @@ export class UserRegisterService {
             return await this.db.repo(JadeUserEntity).findOneById(payload.jadeUserId);
         }
 
-        else return Observable.of({id: -1, rsiHandle: "", scfrId: 0, discordId: ""}).toPromise();
+        else return Observable.of(new JadeUserEntity()).toPromise();
     }
 
     /**
@@ -54,7 +48,58 @@ export class UserRegisterService {
             payload = null;
         }
 
+        console.log("decoded", payload);
         return payload;
+    }
+
+
+    /**
+     * For a given user, try to set-up his handle
+     * 
+     * @param user the db-user we want to modify 
+     * @param handle his handle
+     * @return the new user object
+     * @throws if can't use this handle
+     */
+    public async setUserHandle(user: JadeUserEntity, handle: string) {
+        if (!handle) throw "handle cannot be empty";
+        const userWithHandle = await this.handleExistsInDb(handle);
+
+        // Someone has this handle
+        if (userWithHandle) {
+            if (userWithHandle.auth && userWithHandle.auth.is_authed) {
+                // The user that has this handle is authed, so you'd need to be him to ge this handle
+                throw "handle already used by authed player";
+            }
+
+            // Whoever used this handle before didn't bother to auth, so we can assume you're the same guy.
+
+            return userWithHandle;
+        }
+
+        // No one has this handle, we can safely add it.
+        user.rsiHandle = handle;
+
+        // This will insert a new user if we had none, or update the current one if we were authed.
+        await this.db.repo(JadeUserEntity).persist(user);
+
+        return user;
+    }
+
+    /**
+     * Checks if a given handle exists in the db
+     * @param handle 
+     */
+    public async handleExistsInDb(handle: string): Promise<JadeUserEntity> {
+        return await this.db.repo(JadeUserEntity).findOne({ rsiHandle: handle });
+    }
+
+    /**
+     * Generate a token for 
+     * @param user 
+     */
+    public generateTokenFor(user: IJadeUser) {
+
     }
 
 }

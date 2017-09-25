@@ -1,0 +1,1 @@
+export const xJadeToken = "x-jade-token";
