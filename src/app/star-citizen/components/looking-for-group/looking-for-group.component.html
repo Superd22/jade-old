@@ -1,0 +1,21 @@
+<md-horizontal-stepper>
+  <md-step>
+    <ng-template mdStepLabel><a routerLink="criteres">Critères de recherche</a></ng-template>
+  </md-step>
+  <md-step>
+    <ng-template mdStepLabel><a routerLink="contact">Informations de contact</a></ng-template>
+  </md-step>
+  <md-step>
+    <ng-template mdStepLabel><a routerLink="groupes">Voir les groupes</a></ng-template>
+  </md-step>
+</md-horizontal-stepper>
+
+<router-outlet></router-outlet>
+
+<!--<a md-tab-link
+*ngFor="let link of navLinks"
+[routerLink]="link"
+routerLinkActive #rla="routerLinkActive"
+[active]="rla.isActive">
+{{tabLink.label}}
+</a>-->
