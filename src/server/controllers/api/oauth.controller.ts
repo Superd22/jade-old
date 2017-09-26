@@ -1,19 +1,41 @@
+import { DbService } from './../../services/db.service';
+import { Container } from 'typedi';
+import { JadeUserEntity } from './../../entity/user/jade-user.entity';
 import { APIResponse } from './../../services/api-response.service';
 import { OAuthCrendetials } from './../../../common/config/oauth.conf';
-import { JsonController, Param, Body, Get, Post, Put, Delete, Patch } from "routing-controllers";
+import { JsonController, Param, Body, Get, Post, Put, Delete, Patch, CurrentUser, Res } from "routing-controllers";
 import { oAuthProviders } from '../../../common/enums/oauth-providers.enum';
 import * as unirest from 'unirest';
 import { RequestOptions } from 'http';
+import { Response } from "express";
 
 
 @JsonController("/oauth")
 export class APIIdentifyController {
 
+    /**
+     * Get a code from a provider, fetch a token and stores it in the db
+     * 
+     * @param provider the provider we got the code from
+     * @param code its code
+     * @return the current user with new authorisation 
+     */
     @Get("/getToken/:provider/:code")
-    public async getIdentifyPacket( @Param("provider") provider: oAuthProviders, @Param("code") code: string) {
-        if (!OAuthCrendetials[provider]) throw APIResponse.err("provider '" + provider + "' is not recognized");
+    public async getIdentifyPacket( @CurrentUser() user: JadeUserEntity, @Param("provider") provider: oAuthProviders, @Param("code") code: string, @Res() response: Response) {
+        if (!OAuthCrendetials[provider]) return response.send(APIResponse.err("provider '" + provider + "' is not recognized"));
 
-        return APIResponse.send(await this.getTokenFromCode(provider, code));
+        // Get our token from our provider
+        const token = await this.getTokenFromCode(provider, code);
+
+        // Set our token
+        user.setAuthToken(provider, token['access_token']);
+        // And save
+        await Container.get(DbService).repo(JadeUserEntity).persist(user);
+        
+        // Don't forget to set our token
+        APIResponse.setTokenUser(response, user);
+
+        return response.send(APIResponse.send(user));
     }
 
     /**

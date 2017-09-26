@@ -1,9 +1,11 @@
+import { OauthDiscordService } from './../../services/oauth-discord.service';
 import { IJadeUser } from './../../../../common/interfaces/User/jadeUser.interface';
 import { IJadeToken } from './../../../../common/interfaces/jade-token';
 import { RsiApiService, IRSIDossierSummary } from './../../../common/services/rsi-api.service';
 import { JadeApiService } from './../../../common/services/jade-api.service';
 import { IdentifyService } from './../../services/identify.service';
 import { Component, OnInit } from '@angular/core';
+import { MdIconRegistry } from '@angular/material';
 
 @Component({
   selector: 'jade-authbox',
@@ -23,7 +25,8 @@ export class AuthboxComponent implements OnInit {
     return this.currentDossier && this.currentDossier.avatar ? this.currentDossier.avatar : this.currentIdent && this.currentIdent.rsiAvatar ? this.currentIdent.rsiAvatar : "assets/images/no-avatar.jpg";
   }
 
-  constructor(protected identify: IdentifyService, protected api: JadeApiService, private rsi: RsiApiService) {
+  constructor(protected identify: IdentifyService, protected api: JadeApiService,
+    private rsi: RsiApiService, protected oauthDiscord: OauthDiscordService) {
 
 
     // Every time we change token we wanna check a few thingies.

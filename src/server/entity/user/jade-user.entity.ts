@@ -5,6 +5,7 @@ import { JadeLFGUserEntity } from './../star-citizen/lfg-user.entity';
 import { JadeUserAuthEntity } from './jade-user-auth.entity';
 import { IJadeUser } from '../../../common/interfaces/User/jadeUser.interface';
 import { Entity, PrimaryGeneratedColumn, Column, Index, OneToOne, JoinColumn, OneToMany } from "typeorm";
+import { oAuthProviders } from '../../../common/enums/oauth-providers.enum';
 
 @Entity()
 export class JadeUserEntity implements IJadeUser {
@@ -34,9 +35,9 @@ export class JadeUserEntity implements IJadeUser {
     @JoinColumn()
     lfg: JadeLFGUserEntity = null;
 
-    @OneToOne(type => JadeUserHandleCodeEntity, handle => handle.user, { cascadeAll: true })
+    @OneToOne(type => JadeUserHandleCodeEntity, handle => handle.user, { cascadeInsert: true, cascadeUpdate: true })
     @JoinColumn()
-    _handleCode: JadeUserHandleCodeEntity;
+    _handleCode: JadeUserHandleCodeEntity = null;
 
 
     /**
@@ -78,6 +79,18 @@ export class JadeUserEntity implements IJadeUser {
         this.removeCodeForHandle();
         this.rsiHandle = "";
         if (this.auth) this.auth.handle_trusted = false;
+    }
+
+    /**
+     * Set the auth token for a given provider
+     * 
+     * @param provider the provider 
+     * @param token the token we got
+     * @param refreshToken optional refresh token
+     */
+    public setAuthToken(provider: oAuthProviders, token: string, refreshToken?: string) {
+        if (!this.auth) this.auth = new JadeUserAuthEntity();
+        this.auth.setToken(provider, token, refreshToken);
     }
 
 

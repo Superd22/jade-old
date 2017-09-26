@@ -14,7 +14,7 @@ import { Observable } from 'rxjs/Observable';
  * Used to register users 
  */
 @Service()
-export class UserRegisterService {    
+export class UserRegisterService {
     private db: DbService = Container.get(DbService);
 
     public constructor() { }
@@ -34,9 +34,11 @@ export class UserRegisterService {
      * Finds an user from its id
      * @param jadeUserId the id to check
      */
-    public async findUserFromId(jadeUserId:number): Promise<IJadeUser> {
-        const user = await this.db.repo(JadeUserEntity).findOneById(jadeUserId);
-        if(user) return user;
+    public async findUserFromId(jadeUserId: number): Promise<IJadeUser> {
+        const user = await this.db.repo(JadeUserEntity).findOne(
+            { where: { id: jadeUserId }, relations: ['_handleCode', 'auth'] }
+        );
+        if (user) return user;
 
         return Observable.of(new JadeUserEntity()).toPromise();
     }

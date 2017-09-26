@@ -13,8 +13,8 @@
     </md-card-title>
   </md-card-header>
   <md-card-actions>
-    <button md-button>Se connecter avec SC.FR</button>
-    <button md-button>Se connecter avec Discord</button>
+    <button md-button (click)="oauthDiscord.get_authorization()"> <img class="mat-icon material-icons" src="assets/images/Discord-Logo.svg" style="height:32px;"> Se connecter via Discord</button>
+    <button md-button> <img class="mat-icon material-icons" src="assets/images/SCFR-logo.notext.dark.png" style="width:32px;"> Se connecter via SC.FR</button>
   </md-card-actions>
 </md-card>
 

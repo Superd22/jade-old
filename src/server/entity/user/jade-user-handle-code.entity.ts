@@ -12,7 +12,7 @@ export class JadeUserHandleCodeEntity {
     id: number;
 
     /** handle we can verify */ 
-    @OneToOne(type => JadeUserEntity, user => user._handleCode)
+    @OneToOne(type => JadeUserEntity, user => user._handleCode, {cascadeAll: true})
     user: JadeUserEntity;
 
     /** verification code */
