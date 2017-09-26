@@ -1,4 +1,4 @@
-import { JWTSecret } from './../config/jwt.config';
+import { JWTSecret } from '../config/jwt.conf';
 import { JadeUserEntity } from './../entity/user/jade-user.entity';
 import { DbService } from './../services/db.service';
 import { Container } from 'typedi';
@@ -55,7 +55,7 @@ describe("/identify", () => {
     describe("PATCH /handle/", () => {
         it("Should throw on empty handle", async (done) => {
             const response = await TestBootStrap.api.patch("/identify/handle");
-            expect(response.status).toBe(400);
+            TestShared.apiError(response.body);
             done();
         });
 
@@ -69,7 +69,7 @@ describe("/identify", () => {
                 ok = await Container.get(DbService).repo(JadeUserEntity).findOne({ rsiHandle: newHandle }) === undefined;
             }
 
-            const response = await TestBootStrap.api.patch("/identify/handle").query({ handle: newHandle });
+            const response = await TestBootStrap.api.patch("/identify/handle").send({ handle: newHandle });
 
             // Check we have no error
             TestShared.apiNoError(response.body);
@@ -94,7 +94,7 @@ describe("/identify", () => {
             await Container.get(DbService).repo(JadeUserEntity).persist(user);
 
             // Call the api
-            const response = await TestBootStrap.api.patch("/identify/handle").query({ handle: user.rsiHandle });
+            const response = await TestBootStrap.api.patch("/identify/handle").send({ handle: user.rsiHandle });
 
             // Check everything
             TestShared.apiNoError(response.body);

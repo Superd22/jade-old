@@ -1,3 +1,6 @@
+import { DbService } from './../../services/db.service';
+import { JadeUserHandleCodeEntity } from './jade-user-handle-code.entity';
+import { Container } from 'typedi';
 import { JadeLFGUserEntity } from './../star-citizen/lfg-user.entity';
 import { JadeUserAuthEntity } from './jade-user-auth.entity';
 import { IJadeUser } from '../../../common/interfaces/User/jadeUser.interface';
@@ -23,7 +26,7 @@ export class JadeUserEntity implements IJadeUser {
     @Column("varchar")
     rsiAvatar: string = "";
 
-    @OneToOne(type => JadeUserAuthEntity, auth => auth.user, { cascadeAll: true })
+    @OneToOne(type => JadeUserAuthEntity, auth => auth.user, { cascadeAll: true, cascadeRemove: true })
     @JoinColumn()
     auth: JadeUserAuthEntity = null;
 
@@ -31,5 +34,55 @@ export class JadeUserEntity implements IJadeUser {
     @JoinColumn()
     lfg: JadeLFGUserEntity = null;
 
+    @OneToOne(type => JadeUserHandleCodeEntity, handle => handle.user, { cascadeAll: true })
+    @JoinColumn()
+    _handleCode: JadeUserHandleCodeEntity;
+
+
+    /**
+     * Check if an user is registered one way or another
+     */
+    public get isRegistered(): boolean {
+        return Boolean(this.discordId || this.scfrId);
+    }
+
+    /**
+     * Magic setter for handle
+     * @param newHandle the new handle to set
+     * @param trusted if we're trusting this handle or not (i.e verified by spectrum)
+     */
+    public async setHandle(newHandle: string, trusted?: boolean) {
+        this.rsiHandle = newHandle;
+
+        if (trusted) {
+            if (!this.auth) this.auth = new JadeUserAuthEntity();
+            this.auth.handle_trusted = true;
+
+            // We do not need this verification code anymore.
+            this._handleCode = null;
+        }
+        // We're adding a non-trusted handle, we're gonna gen an auth code to trust this in the future
+        else {
+            // IF we have a code, discard it.
+            this.removeCodeForHandle();
+
+            // and create our new code
+            this._handleCode = new JadeUserHandleCodeEntity();
+        }
+    }
+
+    /**
+     * Removes the handle for this user
+     */
+    public removeHandle() {
+        this.removeCodeForHandle();
+        this.rsiHandle = "";
+        if (this.auth) this.auth.handle_trusted = false;
+    }
+
+
+    private async removeCodeForHandle() {
+        if (this._handleCode) await Container.get(DbService).repo(JadeUserHandleCodeEntity).remove(this._handleCode);
+    }
 
 }

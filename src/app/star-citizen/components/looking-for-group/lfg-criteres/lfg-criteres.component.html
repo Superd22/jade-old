@@ -1,3 +1,19 @@
-<p>
-  lfg-criteres works!
-</p>
+<div class="mode-selector">
+  <button (click)="toggleMode('arena-commander')">Arena Commander</button>
+  <button (click)="toggleMode('star-citizen')">Star Citizen</button>
+  <button (click)="toggleMode('star-marine')">Star Marine</button>
+</div>
+
+<div class="sub-modes">
+  <div class="sub-mode-pannel" [ngClass]="mode" *ngFor="let mode of selectedModes">
+    <h4>Besoin de préciser tes envies ?</h4>
+
+    <ng-container *ngFor="let submode of displaySubModes | scSubModeByMode: mode">
+      <md-slide-toggle class="example-margin" [checked]="checked" [(ngModel)]="submode.selected">
+        {{submode.name}}
+      </md-slide-toggle>
+    </ng-container>
+
+
+  </div>
+</div>

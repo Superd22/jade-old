@@ -1,3 +1,4 @@
+import { DbService } from './../services/db.service';
 import { Container } from 'typedi';
 import { ExpressService } from './../services/express.service';
 import { launchServer } from '../main';
@@ -20,5 +21,11 @@ new TestBootStrap();
 describe("Bootstraping", () => {
     it("Should create server", () => {
         expect(TestBootStrap.express).toBeTruthy();
+    });
+
+    it("Should launch db", async (done) => {
+        await Container.get(DbService).connection;
+
+        done();
     });
 });

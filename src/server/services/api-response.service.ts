@@ -1,4 +1,4 @@
-import { JWTSecret } from './../config/jwt.config';
+import { JWTSecret } from '../config/jwt.conf';
 import { IJadeToken } from './../../common/interfaces/jade-token';
 import { xJadeToken } from './../../common/consts/x-jade-token.const';
 import { IJadeUser } from './../../common/interfaces/User/jadeUser.interface';

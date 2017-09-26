@@ -1,7 +1,7 @@
 import { JadeUserEntity } from './../entity/user/jade-user.entity';
 import { IJadeUser } from './../../common/interfaces/User/jadeUser.interface';
 import { IJadeToken } from './../../common/interfaces/jade-token';
-import { JWTSecret } from './../config/jwt.config';
+import { JWTSecret } from '../config/jwt.conf';
 import { DbService } from './db.service';
 import { JadeMysqlConfig } from './../../common/config/mysql.conf';
 import { Service, Inject, Container } from "typedi";
@@ -27,13 +27,18 @@ export class UserRegisterService {
     public async findUserFromToken(token: string): Promise<IJadeUser> {
         let payload = this.getTokenData(token);
 
-        console.log("payload", payload);
+        return await this.findUserFromId(payload ? payload.jadeUserId : -1);
+    }
 
-        if (payload && payload.jadeUserId > -1) {
-            return await this.db.repo(JadeUserEntity).findOneById(payload.jadeUserId);
-        }
+    /**
+     * Finds an user from its id
+     * @param jadeUserId the id to check
+     */
+    public async findUserFromId(jadeUserId:number): Promise<IJadeUser> {
+        const user = await this.db.repo(JadeUserEntity).findOneById(jadeUserId);
+        if(user) return user;
 
-        else return Observable.of(new JadeUserEntity()).toPromise();
+        return Observable.of(new JadeUserEntity()).toPromise();
     }
 
     /**
@@ -68,7 +73,7 @@ export class UserRegisterService {
 
         // Someone has this handle
         if (userWithHandle) {
-            if (userWithHandle.auth && userWithHandle.auth.is_authed) {
+            if (userWithHandle.isRegistered) {
                 // The user that has this handle is authed, so you'd need to be him to ge this handle
                 throw "handle already used by authed player";
             }
@@ -78,7 +83,7 @@ export class UserRegisterService {
         }
 
         // No one has this handle, we can safely add it.
-        user.rsiHandle = handle;
+        user.setHandle(handle, false);
 
         // This will insert a new user if we had none, or update the current one if we were authed.
         await this.db.repo(JadeUserEntity).persist(user);

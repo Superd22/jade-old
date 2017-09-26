@@ -7,8 +7,7 @@ export class JadeUserAuthEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @OneToOne(type => JadeUserEntity, user => user.auth)
-    @JoinColumn()
+    @OneToOne(type => JadeUserEntity, user => user.auth, { cascadeAll: true })
     user: JadeUserEntity;
 
     @Column("varchar")
@@ -16,6 +15,9 @@ export class JadeUserAuthEntity {
 
     @Column("varchar")
     discord_token: string = "";
+
+    @Column("boolean")
+    handle_trusted: boolean = false;
 
 
     /**

@@ -1,6 +1,6 @@
 import { APIResponse } from './../../services/api-response.service';
 import { OAuthCrendetials } from './../../../common/config/oauth.conf';
-import { JsonController, Param, Body, Get, Post, Put, Delete } from "routing-controllers";
+import { JsonController, Param, Body, Get, Post, Put, Delete, Patch } from "routing-controllers";
 import { oAuthProviders } from '../../../common/enums/oauth-providers.enum';
 import * as unirest from 'unirest';
 import { RequestOptions } from 'http';
@@ -46,6 +46,15 @@ export class APIIdentifyController {
             case "discord": return "https://discordapp.com/api/oauth2/token";
             case "scfr": return "";
         }
+    }
+
+    /**
+     * Validates a handle/user couple
+     * @param handle 
+     */
+    @Patch("/rsi/validateHandle/:handle")
+    private spectrumValidateHandle( @Param('handle') handle: string) {
+
     }
 
 }

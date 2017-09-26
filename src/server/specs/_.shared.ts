@@ -1,5 +1,9 @@
+import { xJadeToken } from './../../common/consts/x-jade-token.const';
+import { JWTRSISecret } from './../../bot/spectrum/config/JWT-rsi.conf';
+import { JWTSecret } from './../config/jwt.conf';
 import { IJadeAPIResponse } from './../../common/interfaces/api-response';
 import { install as jCoInstall } from 'jasmine-co';
+import * as jwt from "jsonwebtoken";
 
 export class TestShared {
     /**
@@ -30,7 +34,7 @@ export class TestShared {
     /**
      * extract the data from an api response
      */
-    public static getReturnData(data:IJadeAPIResponse) {
+    public static getReturnData(data: IJadeAPIResponse) {
         return data.data;
     }
 
@@ -48,10 +52,36 @@ export class TestShared {
      * @param data 
      * @param errorMsg 
      */
-    public static apiError(data: IJadeAPIResponse, errorMsg?:string) {
+    public static apiError(data: IJadeAPIResponse, errorMsg?: string) {
         expect(data).toBeTruthy();
         expect(data.error).toBe(true);
-        if(errorMsg) expect(data.msg).toBe(errorMsg);
+        if (errorMsg) expect(data.msg).toBe(errorMsg);
+    }
+
+    public static genJadeToken(payload: any): [string, string] {
+        return TestShared.genToken("jade", payload);
+    }
+
+    public static genToken(type: "jade" | "spectrum" = "jade", payload: any): [string, string] {
+        const tokenName = () => {
+            switch(type) {
+                case "jade": return xJadeToken;
+                case "spectrum": return "x-jade-spectrum-auth";
+            }
+        }
+
+        const secret = () => {
+            switch (type) {
+                case "jade": return JWTSecret;
+                case "spectrum": return JWTRSISecret;
+            }
+        };
+
+        return [tokenName(), jwt.sign(payload, secret())];
+    }
+
+    public static genSpectrumToken(payload: any): [string, string] {
+        return TestShared.genToken("spectrum", payload);
     }
 
 }

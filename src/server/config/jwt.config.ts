@@ -1,1 +1,0 @@
-export const JWTSecret = "3cd78e578d51a4b958cdfd945d33bd2f3d9de766";

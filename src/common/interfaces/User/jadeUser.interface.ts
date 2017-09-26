@@ -8,5 +8,7 @@ export interface IJadeUser {
     /** discord snowflake id */
     discordId: string;
     /** rsi avatar image */
-    rsiAvatar:string;
+    rsiAvatar: string;
+    /** auth thingy */
+    auth?: any;
 }
