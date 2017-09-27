@@ -1,3 +1,4 @@
+import { DiscordService } from './discord.service';
 import { JadeUserEntity } from './../entity/user/jade-user.entity';
 import { IJadeUser } from './../../common/interfaces/User/jadeUser.interface';
 import { IJadeToken } from './../../common/interfaces/jade-token';
@@ -9,6 +10,7 @@ import { createConnection, Connection } from "typeorm";
 import { ReplaySubject } from "rxjs";
 import * as jwt from "jsonwebtoken";
 import { Observable } from 'rxjs/Observable';
+import { oAuthProviders } from '../../common/enums/oauth-providers.enum';
 
 /**
  * Used to register users 
@@ -60,6 +62,37 @@ export class UserRegisterService {
         return payload;
     }
 
+
+    /**
+     * Helper function to grab all the providers info from provider we have auth with
+     * 
+     * @param user the user to check
+     * @param forceUpdate wether to force the update if we already have results cached
+     */
+    public async setUserProvidersInfo(user: JadeUserEntity, forceUpdate?: boolean) {
+        await this.setUserDiscordInfo(user, forceUpdate);
+    }
+
+    public async setUserDiscordInfo(user: JadeUserEntity, forceUpdate?: boolean) {
+        if (user.auth && user.auth.discord_token) {
+            if (!user.discordId || forceUpdate) {
+                const discordId = await Container.get(DiscordService).getIdentity(user);
+                console.log("got id");
+
+                // We got what we wanted
+                if (discordId && discordId['username'] && discordId['id']) {
+                    user.discordId = discordId['id'];
+                    console.log("pre save", user);
+                    Container.get(DbService).repo(JadeUserEntity).persist(user).then((test) => console.log("done", test), (rejected) => console.log(rejected));
+                    console.log("post save");
+                }
+
+                console.log(discordId);
+            }
+        }
+
+        return;
+    }
 
     /**
      * For a given user, try to set-up his handle

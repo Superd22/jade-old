@@ -13,10 +13,9 @@ import * as unirest from 'unirest';
 @Service()
 export class DiscordService {
 
-    private _api = "https://discordapp.com/api/";
+    private _api = "https://discordapp.com/api/v6/";
 
     public constructor() { }
-
 
     /**
      * Check discord identity of the user
@@ -30,6 +29,7 @@ export class DiscordService {
             })
         );
     }
+
 
     private authorizationToken(user: JadeUserEntity) {
         const token = user.auth ? user.auth.discord_token : "";

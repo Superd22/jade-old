@@ -27,15 +27,15 @@ export class JadeUserEntity implements IJadeUser {
     @Column("varchar")
     rsiAvatar: string = "";
 
-    @OneToOne(type => JadeUserAuthEntity, auth => auth.user, { cascadeAll: true, cascadeRemove: true })
+    @OneToOne(type => JadeUserAuthEntity, auth => auth.user, { cascadeInsert: true, cascadeUpdate: true })
     @JoinColumn()
     auth: JadeUserAuthEntity = null;
 
-    @OneToOne(type => JadeLFGUserEntity, lfg => lfg.user, { cascadeAll: true })
+    @OneToOne(type => JadeLFGUserEntity, lfg => lfg.user, { cascadeInsert: true, cascadeUpdate: true })
     @JoinColumn()
     lfg: JadeLFGUserEntity = null;
 
-    @OneToOne(type => JadeUserHandleCodeEntity, handle => handle.user, { cascadeInsert: true, cascadeUpdate: true })
+    @OneToOne(type => JadeUserHandleCodeEntity, handle => handle.user, { cascadeInsert: true, cascadeUpdate: true, cascadeRemove: true })
     @JoinColumn()
     _handleCode: JadeUserHandleCodeEntity = null;
 

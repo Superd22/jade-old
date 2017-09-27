@@ -6,7 +6,7 @@ import { oAuthProviders } from '../../../common/enums/oauth-providers.enum';
 export class OauthDiscordService extends OauthService {
 
   protected client_id = "360994842119241730";
-  protected api_url = "https://discordapp.com/api/oauth2/";
+  protected api_url = "https://discordapp.com/api/v6/oauth2/";
   protected provider: oAuthProviders = "discord";
 
   constructor() {

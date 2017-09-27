@@ -1,3 +1,5 @@
+import { IJadeUserHandleCode } from './jade-user-handle-code.interface';
+import { IJadeUserAuth } from './jade-user-auth.interface';
 export interface IJadeUser {
     /** internal db id */
     id: number;
@@ -10,5 +12,6 @@ export interface IJadeUser {
     /** rsi avatar image */
     rsiAvatar: string;
     /** auth thingy */
-    auth?: any;
+    auth?: IJadeUserAuth;
+    _handleCode?: IJadeUserHandleCode;
 }

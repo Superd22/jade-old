@@ -16,7 +16,7 @@ export class AuthVerifyHandleCommand implements aSpectrumCommand {
         // Get user by handle
         const user = await Container.get(DbService).repo(JadeUserEntity).findOne({
             where: { rsiHandle: message.member.nickname },
-            relations: ["_handleCode"]
+            relations: ["_handleCode", "auth"]
         });
         if (!user) lobby.sendPlainTextMessage("[BOT] Vous devez d'abord vous inscrire sur jade.");
         else if (user._handleCode.code !== verifCode) lobby.sendPlainTextMessage("[BOT] Le code de confirmation ne correspond pas.");
@@ -29,9 +29,13 @@ export class AuthVerifyHandleCommand implements aSpectrumCommand {
             let oldUser = await userRepo.findOne({ rsiHandle: handle });
             if (oldUser) { oldUser.removeHandle(); userRepo.persist(oldUser); }
 
+            console.log("pre persist", user);
             // Now we can set the handle to the current user
             user.setHandle(handle, true);
+            console.log("pre presit new", user);
             await userRepo.persist(user);
+
+            console.log("post persist");
 
             lobby.sendPlainTextMessage("[BOT] Votre handle a bien été confirmé, félicitations !");
         }

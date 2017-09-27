@@ -13,7 +13,10 @@
     </md-card-title>
   </md-card-header>
   <md-card-actions>
-    <button md-button (click)="oauthDiscord.get_authorization()"> <img class="mat-icon material-icons" src="assets/images/Discord-Logo.svg" style="height:32px;"> Se connecter via Discord</button>
+    <button *ngIf="!currentIdent?.discordId; else disconectDiscord" md-button (click)="oauthDiscord.get_authorization()"> <img class="mat-icon material-icons" src="assets/images/Discord-Logo.svg" style="height:32px;"> Se connecter via Discord</button>
+    <ng-template #disconectDiscord>
+      <button md-button disabled> <img class="mat-icon material-icons" src="assets/images/Discord-Logo.svg" style="height:32px;"> Connecté à discord </button>
+    </ng-template>
     <button md-button> <img class="mat-icon material-icons" src="assets/images/SCFR-logo.notext.dark.png" style="width:32px;"> Se connecter via SC.FR</button>
   </md-card-actions>
 </md-card>

@@ -1,3 +1,4 @@
+import { DiscordService } from './../../services/discord.service';
 import { DbService } from './../../services/db.service';
 import { Container } from 'typedi';
 import { JadeUserEntity } from './../../entity/user/jade-user.entity';
@@ -27,17 +28,30 @@ export class APIIdentifyController {
         // Get our token from our provider
         const token = await this.getTokenFromCode(provider, code);
 
-        // Set our token
-        user.setAuthToken(provider, token['access_token']);
-        // And save
-        await Container.get(DbService).repo(JadeUserEntity).persist(user);
-        
+        // Update db
+        await this.updateTokenFromProvider(provider, user, token);
+
         // Don't forget to set our token
         APIResponse.setTokenUser(response, user);
 
         return response.send(APIResponse.send(user));
     }
 
+    /**
+     * Updates the db with a new auth token
+     * @param provider the provider that issued the token
+     * @param user the user we need to update
+     * @param token the new token
+     */
+    public async updateTokenFromProvider(provider: oAuthProviders, user: JadeUserEntity, token: any) {
+        if (token['access_token']) {
+            // Set our token
+            user.setAuthToken(provider, token['access_token'], token['refresh_token']);
+            // And save
+            await Container.get(DbService).repo(JadeUserEntity).persist(user);
+        }
+    }
+    
     /**
      * Gets an auth code from the front-end, and fetches for a token
      * @param provider the provider this code came frome
@@ -47,15 +61,16 @@ export class APIIdentifyController {
         const opts = {
             'client_id': OAuthCrendetials[provider][0],
             'client_secret': OAuthCrendetials[provider][1],
-            'grant_type': 'client_credentials',
-            'redirect_uri': 'https://asd.asd',
+            'grant_type': 'authorization_code',
+            'redirect_uri': 'http://192.168.1.25:4444/auth/redirect?provider=discord',
             'code': code,
         };
 
 
         return new Promise((resolve, reject) => {
-            unirest.post(this.getApiUrl(provider)).headers({ "Content-Type": "x-www-form-urlencoded" })
+            unirest.post(this.getApiUrl(provider)).headers({ "Content-Type": "application/x-www-form-urlencoded" })
                 .type('form').send(opts).end((response) => {
+                    console.log(response.body)
                     resolve(response.body);
                 });
         });
@@ -65,7 +80,7 @@ export class APIIdentifyController {
 
     private getApiUrl(provider: oAuthProviders): string {
         switch (provider) {
-            case "discord": return "https://discordapp.com/api/oauth2/token";
+            case "discord": return "https://discordapp.com/api/v6/oauth2/token";
             case "scfr": return "";
         }
     }
