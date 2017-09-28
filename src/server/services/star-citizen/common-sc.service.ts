@@ -31,12 +31,12 @@ export class SCCommonService {
         // Only include active game modes if the flag isn't set
         if (!includeInactive) where.gameMode = { active: true };
 
-        // Only include official sub-modes if the flag isn't set
-        if (!includeCustom) where.custom = true;
+        // Only include official sub-modes if the flag is set
+        if (includeCustom) where.custom = true;
 
         // Get what we want
         const subs = await this._subModeRepo.find({ where: where, relations: ['gameMode'] });
-
+        
         return subs;
     }
 

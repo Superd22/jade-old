@@ -17,4 +17,7 @@ export class SCGameModeEntity implements ISCGameMode {
     /** if this game mode is active */
     @Column("boolean")
     active: boolean = true;
+
+    @Column("varchar")
+    prettyName: string;
 }

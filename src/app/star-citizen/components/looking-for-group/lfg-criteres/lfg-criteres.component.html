@@ -1,7 +1,8 @@
 <div class="mode-selector">
-  <button (click)="toggleMode('arena-commander')">Arena Commander</button>
-  <button (click)="toggleMode('star-citizen')">Star Citizen</button>
-  <button (click)="toggleMode('star-marine')">Star Marine</button>
+  <button md-button color="accent" (click)="toggleMode(mode)" [ngClass]="{'mat-raised-button': mode.selected}" *ngFor="let mode of displayModes">
+    {{mode.prettyName}}
+  </button>
+
 </div>
 
 <div class="sub-modes">
@@ -17,3 +18,5 @@
 
   </div>
 </div>
+
+<button md-raised-button color="primary" (click)="submit()">Valider !</button>

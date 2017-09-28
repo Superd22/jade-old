@@ -28,8 +28,8 @@ export class APISController {
     @Get("/modes-and-sub")
     public async getAllModesAndSub() {
         return APIResponse.send({
-            gameModes: await this._scService.getModes(),
             subModes: await this._scService.getSubModes(),
+            gameModes: await this._scService.getModes(),
         });
     }
 }

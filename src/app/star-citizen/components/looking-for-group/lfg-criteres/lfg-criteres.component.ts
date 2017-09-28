@@ -1,3 +1,9 @@
+import { ScLfService } from './../../../services/sc-lf.service';
+import { SCDefaultGameModes } from './../../../../../common/enums/star-citizen/default-game-modes.enum';
+import { IDisplaySCMode } from './../../../interfaces/sc-game-mode.interface';
+import { IDisplaySCSubMode } from './../../../interfaces/sc-game-sub-mode.interface';
+import { SCDefaultGameSubModes } from './../../../../../common/enums/star-citizen/default-game-sub-modes.enum';
+import { ISCGameMode } from './../../../../../common/interfaces/star-citizen/game-mode.interface';
 import { Component, OnInit } from '@angular/core';
 import { ISCDefaultGameMode } from '../../../../../common/enums/game-mode.enum';
 import { SCGameSubMode } from '../../../../../common/enums/game-sub-mode.enum';
@@ -10,26 +16,24 @@ import { MdChipInputEvent } from '@angular/material';
 })
 export class LfgCriteresComponent implements OnInit {
 
-  /** mode the player wants to play */
-  public selectedModes: ISCDefaultGameMode[] = [];
 
-  public displaySubModes: ISCDisplaySubMode[] = [
-    { id: SCGameSubMode.AC_BATTLE_ROYALE, gameMode: "arena-commander", name: "Battle Royale" },
-    { id: SCGameSubMode.AC_FREE_FLIGHT, gameMode: "arena-commander", name: "Vol Libre" },
-    { id: SCGameSubMode.AC_RACE, gameMode: "arena-commander", name: "Course" },
-    { id: SCGameSubMode.AC_SQUADRON_BATTLE, gameMode: "arena-commander", name: "Squadron Battle" },
-    { id: SCGameSubMode.AC_CTF, gameMode: "arena-commander", name: "Capture the Core" },
-    { id: SCGameSubMode.AC_VANDUUL, gameMode: "arena-commander", name: "Vanduul Swarm" },
+  private _backUpModes: ISCGameMode[] = [];
+  private _backUpSubModes: IDisplaySCSubMode[] = [];
 
-    { id: SCGameSubMode.SM_ELIMINIATION, gameMode: "star-marine", name: "Elimination" },
-    { id: SCGameSubMode.SM_LAST_STAND, gameMode: "star-marine", name: "Last Stand" },
+  /** all the sub modes to display */
+  public displaySubModes: IDisplaySCSubMode[] = SCDefaultGameSubModes;
 
-    { id: SCGameSubMode.SC_PU, gameMode: "star-citizen", name: "Univers Persistant" },
-  ];
+  /** all the modes to display */
+  public displayModes: IDisplaySCMode[] = SCDefaultGameModes;
 
-  public displayCustomSubModes: ISCDisplayCustomSubMode[] = [];
+  /** currently selected modes */
+  public get selectedModes(): IDisplaySCMode[] { return this.displayModes.filter((mode) => mode.selected); }
 
-  constructor() { }
+  /** currently selected sub modes */
+  public get selectedSubModes(): IDisplaySCSubMode[] { return this.displaySubModes.filter((submode) => submode.selected); }
+
+
+  constructor(protected scLF: ScLfService) { }
 
   ngOnInit() {
   }
@@ -38,40 +42,12 @@ export class LfgCriteresComponent implements OnInit {
    * Toggle the supplied mode as selected or not.
    * @param mode 
    */
-  public toggleMode(mode: ISCDefaultGameMode) {
-    const isSelected = this.selectedModes.indexOf(mode);
-
-    // Remove if selected, append otherwise
-    if (isSelected > -1) this.selectedModes.splice(isSelected, 1);
-    else this.selectedModes.push(mode);
+  public toggleMode(mode: IDisplaySCMode) {
+    mode.selected = !mode.selected;
   }
 
-  /**
-   * Add a custom sub mode to the list 
-   * @param event 
-   */
-  public addCustomSubMode(event: MdChipInputEvent) {
-    let input = event.input;
-    let value = event.value;
-
-    // Add custom mode
-    if ((value || '').trim()) {
-      this.displayCustomSubModes.push({ name: value.trim(), gameMode: <any>input.name });
-    }
-
-    // Reset the input value
-    if (input) {
-      input.value = '';
-    }
-  }
-
-  /**
-   * Removes a custom sub mode from our selected list
-   * @param customSubMode the sub mode to remove
-   */
-  public removeCustomSubMode(customSubMode: ISCDisplayCustomSubMode) {
-    let index = this.displayCustomSubModes.indexOf(customSubMode);
-    if (index > -1) this.displayCustomSubModes.splice(index, 1);
+  public submit() {
+    this.scLF.setLfg(this.selectedModes, this.selectedSubModes);
   }
 
 }

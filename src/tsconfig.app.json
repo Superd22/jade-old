@@ -9,6 +9,7 @@
   "exclude": [
     "test.ts",
     "server/**",
+    "bot/**",
     "**/*.spec.ts"
   ]
 }
