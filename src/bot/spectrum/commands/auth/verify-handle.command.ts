@@ -27,7 +27,7 @@ export class AuthVerifyHandleCommand implements aSpectrumCommand {
 
             // First we remove the handle if he belonged to someone
             let oldUser = await userRepo.findOne({ rsiHandle: handle });
-            if (oldUser) { oldUser.removeHandle(); userRepo.persist(oldUser); }
+            if (oldUser) { oldUser.removeHandle(); await userRepo.persist(oldUser); }
 
             console.log("pre persist", user);
             // Now we can set the handle to the current user

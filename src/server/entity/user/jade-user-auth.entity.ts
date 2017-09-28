@@ -10,6 +10,7 @@ export class JadeUserAuthEntity implements IJadeUserAuth {
     id: number;
 
     @OneToOne(type => JadeUserEntity, user => user.auth)
+    @JoinColumn()
     user: JadeUserEntity;
 
     @Column("varchar")

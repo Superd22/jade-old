@@ -4,10 +4,10 @@
     <md-card-title>
       <md-form-field>
         <input mdInput type="text" placeholder="Handle" [(ngModel)]="currentHandle">
+        <md-hint *ngIf="currentIdent?.rsiHandle"> {{currentIdent.auth?.handle_trusted ? "Handle vérifié" : "Verifier mon handle:"}} </md-hint>
       </md-form-field>
       <button md-button (click)="goHandle()" *ngIf="currentHandle">
         {{ currentIdent?.rsiHandle ? (currentIdent?.rsiHandle != currentHandle ? "Changer de handle" : "") : (!currentDossier ? "Renseigner mon handle" : "Chercher à nouveau") }}
-      
       </button>
       <button md-raised-button color="primary" (click)="confirmHandle()" *ngIf="currentDossier">Confirmer ce handle</button>
     </md-card-title>

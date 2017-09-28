@@ -27,8 +27,7 @@ export class JadeUserEntity implements IJadeUser {
     @Column("varchar")
     rsiAvatar: string = "";
 
-    @OneToOne(type => JadeUserAuthEntity, auth => auth.user, { cascadeInsert: true, cascadeUpdate: true })
-    @JoinColumn()
+    @OneToOne(type => JadeUserAuthEntity, auth => auth.user, { cascadeInsert: true, cascadeUpdate: true, cascadeRemove: true })
     auth: JadeUserAuthEntity = null;
 
     @OneToOne(type => JadeLFGUserEntity, lfg => lfg.user, { cascadeInsert: true, cascadeUpdate: true })
@@ -54,12 +53,14 @@ export class JadeUserEntity implements IJadeUser {
      */
     public async setHandle(newHandle: string, trusted?: boolean) {
         this.rsiHandle = newHandle;
+        this.auth.handle_trusted = true;
+
+        if (!this.auth) this.auth = new JadeUserAuthEntity();
+        this.auth.handle_trusted = trusted;
 
         if (trusted) {
-            if (!this.auth) this.auth = new JadeUserAuthEntity();
-            this.auth.handle_trusted = true;
-
             // We do not need this verification code anymore.
+            this.removeCodeForHandle();
             this._handleCode = null;
         }
         // We're adding a non-trusted handle, we're gonna gen an auth code to trust this in the future
