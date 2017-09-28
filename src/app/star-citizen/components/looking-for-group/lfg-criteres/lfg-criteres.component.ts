@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ISCGameMode } from '../../../../../common/enums/game-mode.enum';
+import { ISCDefaultGameMode } from '../../../../../common/enums/game-mode.enum';
 import { SCGameSubMode } from '../../../../../common/enums/game-sub-mode.enum';
 import { MdChipInputEvent } from '@angular/material';
 
@@ -11,7 +11,7 @@ import { MdChipInputEvent } from '@angular/material';
 export class LfgCriteresComponent implements OnInit {
 
   /** mode the player wants to play */
-  public selectedModes: ISCGameMode[] = [];
+  public selectedModes: ISCDefaultGameMode[] = [];
 
   public displaySubModes: ISCDisplaySubMode[] = [
     { id: SCGameSubMode.AC_BATTLE_ROYALE, gameMode: "arena-commander", name: "Battle Royale" },
@@ -38,7 +38,7 @@ export class LfgCriteresComponent implements OnInit {
    * Toggle the supplied mode as selected or not.
    * @param mode 
    */
-  public toggleMode(mode: ISCGameMode) {
+  public toggleMode(mode: ISCDefaultGameMode) {
     const isSelected = this.selectedModes.indexOf(mode);
 
     // Remove if selected, append otherwise
@@ -79,7 +79,7 @@ export class LfgCriteresComponent implements OnInit {
 
 
 export interface ISCHasGameMode {
-  gameMode: ISCGameMode,
+  gameMode: ISCDefaultGameMode,
 }
 
 export interface ISCDisplayCustomSubMode extends ISCHasGameMode {

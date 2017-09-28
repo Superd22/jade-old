@@ -1,7 +1,7 @@
 import { SCGameRoomTextMessageEntity } from './game-room-text-message.entity';
 import { JadeUserEntity } from './../user/jade-user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, Index, OneToOne, ManyToOne, OneToMany } from "typeorm";
-import { ISCGameMode } from "./../../../common/enums/game-mode.enum";
+import { ISCDefaultGameMode } from "./../../../common/enums/game-mode.enum";
 @Entity()
 export class SCGameRoomEntity {
 
@@ -24,5 +24,5 @@ export class SCGameRoomEntity {
     texts: SCGameRoomTextMessageEntity[];
 
     @Column("varchar")
-    roomType: ISCGameMode = "star-citizen";
+    roomType: ISCDefaultGameMode = "star-citizen";
 }
