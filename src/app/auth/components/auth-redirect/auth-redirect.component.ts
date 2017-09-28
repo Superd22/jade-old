@@ -1,3 +1,4 @@
+import { OauthSCFRService } from './../../services/oauth-scfr.service';
 import { OauthDiscordService } from './../../services/oauth-discord.service';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
@@ -16,7 +17,7 @@ export class AuthRedirectComponent implements OnInit {
   /** the current provider of the code */
   private _provider: oAuthProviders;
 
-  constructor(protected route: ActivatedRoute, protected discord: OauthDiscordService) {
+  constructor(protected route: ActivatedRoute, protected discord: OauthDiscordService, protected scfr: OauthSCFRService) {
 
   }
 
@@ -45,6 +46,7 @@ export class AuthRedirectComponent implements OnInit {
   private getProviderService(): OauthService {
     switch (this._provider) {
       case "discord": return this.discord;
+      case "scfr": return this.scfr;
     }
 
   }

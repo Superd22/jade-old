@@ -24,8 +24,7 @@ export abstract class OauthService {
    * Prompt the user to auth this client
    */
   public get_authorization() {
-    console.log(this.client_id, this.client_id == 360994842119241730)
-    window.open(this.api_url + "authorize?response_type=code&client_id=" + String(this.client_id) + "&scope=" + this.scope);
+    window.open(this.api_url + "authorize?response_type=code&client_id=" + String(this.client_id) + "&state="+"acs"+"&scope=" + this.scope);
   }
 
 

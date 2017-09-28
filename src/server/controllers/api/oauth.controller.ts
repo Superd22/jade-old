@@ -44,7 +44,7 @@ export class APIIdentifyController {
      * @param token the new token
      */
     public async updateTokenFromProvider(provider: oAuthProviders, user: JadeUserEntity, token: any) {
-        if (token['access_token']) {
+        if (token && token['access_token']) {
             // Set our token
             user.setAuthToken(provider, token['access_token'], token['refresh_token']);
             // And save
@@ -81,7 +81,7 @@ export class APIIdentifyController {
     private getApiUrl(provider: oAuthProviders): string {
         switch (provider) {
             case "discord": return "https://discordapp.com/api/v6/oauth2/token";
-            case "scfr": return "";
+            case "scfr": return "https://starcitizen.fr/Forum/app.php/oauth2/v1/token";
         }
     }
 

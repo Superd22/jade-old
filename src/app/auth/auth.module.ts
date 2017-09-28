@@ -1,3 +1,4 @@
+import { OauthSCFRService } from './services/oauth-scfr.service';
 import { AuthRoutes } from './routes/_.routes';
 import { RouterModule } from '@angular/router';
 import { OauthDiscordService } from './services/oauth-discord.service';
@@ -27,7 +28,7 @@ import { AuthRedirectComponent } from './components/auth-redirect/auth-redirect.
   ],
   declarations: [AuthboxComponent, AuthRedirectComponent],
   exports: [AuthboxComponent],
-  providers: [IdentifyService, OauthDiscordService],
+  providers: [IdentifyService, OauthDiscordService, OauthSCFRService],
 })
 export class AuthModule {
   constructor(private injector: Injector) {

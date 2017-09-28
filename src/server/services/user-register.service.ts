@@ -1,3 +1,4 @@
+import { SCFRService } from './scfr.service';
 import { DiscordService } from './discord.service';
 import { JadeUserEntity } from './../entity/user/jade-user.entity';
 import { IJadeUser } from './../../common/interfaces/User/jadeUser.interface';
@@ -71,23 +72,36 @@ export class UserRegisterService {
      */
     public async setUserProvidersInfo(user: JadeUserEntity, forceUpdate?: boolean) {
         await this.setUserDiscordInfo(user, forceUpdate);
+        await this.setUserSCFRInfo(user, forceUpdate);
+    }
+
+    public async setUserSCFRInfo(user: JadeUserEntity, forceUpdate?: boolean) {
+        if (user.auth && user.auth.scfr_token) {
+            if(user.scfrId === 0 || forceUpdate) {
+                const scfrId = await Container.get(SCFRService).getIdentity(user);
+
+                console.log(scfrId);
+
+
+                if(scfrId && scfrId['data'] && scfrId['data']['user_id']) {
+                    user.scfrId = Number(scfrId['data']['user_id']);
+                    await Container.get(DbService).repo(JadeUserEntity).persist(user);
+                }
+
+            }
+        }
     }
 
     public async setUserDiscordInfo(user: JadeUserEntity, forceUpdate?: boolean) {
         if (user.auth && user.auth.discord_token) {
             if (!user.discordId || forceUpdate) {
                 const discordId = await Container.get(DiscordService).getIdentity(user);
-                console.log("got id");
-
                 // We got what we wanted
                 if (discordId && discordId['username'] && discordId['id']) {
                     user.discordId = discordId['id'];
-                    console.log("pre save", user);
                     Container.get(DbService).repo(JadeUserEntity).persist(user).then((test) => console.log("done", test), (rejected) => console.log(rejected));
-                    console.log("post save");
-                }
 
-                console.log(discordId);
+                }
             }
         }
 

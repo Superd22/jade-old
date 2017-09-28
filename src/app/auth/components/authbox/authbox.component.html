@@ -17,7 +17,13 @@
     <ng-template #disconectDiscord>
       <button md-button disabled> <img class="mat-icon material-icons" src="assets/images/Discord-Logo.svg" style="height:32px;"> Connecté à discord </button>
     </ng-template>
-    <button md-button> <img class="mat-icon material-icons" src="assets/images/SCFR-logo.notext.dark.png" style="width:32px;"> Se connecter via SC.FR</button>
+
+
+    <button md-button *ngIf="!currentIdent?.scfrId; else disconectSCFR" (click)="oauthSCFR.get_authorization()"> <img class="mat-icon material-icons" src="assets/images/SCFR-logo.notext.dark.png" style="width:32px;"> Se connecter via SC.FR</button>
+
+    <ng-template #disconectSCFR>
+      <button md-button disabled> <img class="mat-icon material-icons" src="assets/images/SCFR-logo.notext.dark.png" style="width:32px;">  Connecté à SC.FR </button>
+    </ng-template>
   </md-card-actions>
 </md-card>
 

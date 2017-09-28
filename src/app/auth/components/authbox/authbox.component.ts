@@ -1,3 +1,4 @@
+import { OauthSCFRService } from './../../services/oauth-scfr.service';
 import { OauthDiscordService } from './../../services/oauth-discord.service';
 import { IJadeUser } from './../../../../common/interfaces/User/jadeUser.interface';
 import { IJadeToken } from './../../../../common/interfaces/jade-token';
@@ -26,7 +27,7 @@ export class AuthboxComponent implements OnInit {
   }
 
   constructor(protected identify: IdentifyService, protected api: JadeApiService,
-    private rsi: RsiApiService, protected oauthDiscord: OauthDiscordService) {
+    private rsi: RsiApiService, protected oauthDiscord: OauthDiscordService, protected oauthSCFR: OauthSCFRService) {
 
 
     // Every time we change token we wanna check a few thingies.
