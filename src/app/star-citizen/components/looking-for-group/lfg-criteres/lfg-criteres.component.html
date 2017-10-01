@@ -19,4 +19,4 @@
   </div>
 </div>
 
-<button md-raised-button color="primary" (click)="submit()">Valider !</button>
+<button [disabled]="!selectedModes.length" md-raised-button color="primary" (click)="submit()">Valider !</button>

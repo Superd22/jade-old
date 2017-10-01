@@ -17,6 +17,10 @@ export class AuthRedirectComponent implements OnInit {
   /** the current provider of the code */
   private _provider: oAuthProviders;
 
+  private _success: boolean;
+
+  public busy: boolean = false;
+
   constructor(protected route: ActivatedRoute, protected discord: OauthDiscordService, protected scfr: OauthSCFRService) {
 
   }
@@ -26,10 +30,12 @@ export class AuthRedirectComponent implements OnInit {
       console.log(params);
       this._code = params.get("code");
       this._provider = <any>params.get("provider");
+      this._provider = <any>params.get("provider");
 
       console.log('awas', this);
 
       this.goGetToken();
+      this.buildDisplay();
     });
   }
 
@@ -39,7 +45,16 @@ export class AuthRedirectComponent implements OnInit {
   private goGetToken() {
     let call;
 
-    this.getProviderService().get_token_from_code(this._code).subscribe();
+    if (this._code && this._provider) {
+      this.busy = true;
+      this.getProviderService().get_token_from_code(this._code).subscribe((data) => {
+        this.busy = false;
+      });
+    }
+  }
+
+  private buildDisplay() {
+
   }
 
 

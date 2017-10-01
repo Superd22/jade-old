@@ -14,6 +14,7 @@ export class JadeUserHandleCodeEntity implements IJadeUserHandleCode {
 
     /** handle we can verify */
     @OneToOne(type => JadeUserEntity, user => user._handleCode)
+    @JoinColumn()
     user: JadeUserEntity;
 
     /** verification code */

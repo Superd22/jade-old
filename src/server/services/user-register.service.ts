@@ -1,3 +1,5 @@
+import { SCCommonService } from './star-citizen/common-sc.service';
+import { JadeLFGUserEntity } from './../entity/star-citizen/lfg-user.entity';
 import { SCFRService } from './scfr.service';
 import { DiscordService } from './discord.service';
 import { JadeUserEntity } from './../entity/user/jade-user.entity';
@@ -29,7 +31,7 @@ export class UserRegisterService {
      */
     public async findUserFromToken(token: string): Promise<IJadeUser> {
         let payload = this.getTokenData(token);
-
+        
         return await this.findUserFromId(payload ? payload.jadeUserId : -1);
     }
 
@@ -39,9 +41,14 @@ export class UserRegisterService {
      */
     public async findUserFromId(jadeUserId: number): Promise<IJadeUser> {
         const user = await this.db.repo(JadeUserEntity).findOne(
-            { where: { id: jadeUserId }, relations: ['_handleCode', 'auth'] }
+            { where: { id: jadeUserId }, relations: ['_handleCode', 'auth', 'lfg'] }
         );
-        if (user) return user;
+        if (user) {
+            // Check our LFG status and build it if necesserary 
+            user.lfg = await Container.get(SCCommonService).getLFGOfUser(user);
+
+            return user;
+        }
 
         return Observable.of(new JadeUserEntity()).toPromise();
     }
@@ -77,13 +84,13 @@ export class UserRegisterService {
 
     public async setUserSCFRInfo(user: JadeUserEntity, forceUpdate?: boolean) {
         if (user.auth && user.auth.scfr_token) {
-            if(user.scfrId === 0 || forceUpdate) {
+            if (user.scfrId === 0 || forceUpdate) {
                 const scfrId = await Container.get(SCFRService).getIdentity(user);
 
                 console.log(scfrId);
 
 
-                if(scfrId && scfrId['data'] && scfrId['data']['user_id']) {
+                if (scfrId && scfrId['data'] && scfrId['data']['user_id']) {
                     user.scfrId = Number(scfrId['data']['user_id']);
                     await Container.get(DbService).repo(JadeUserEntity).persist(user);
                 }

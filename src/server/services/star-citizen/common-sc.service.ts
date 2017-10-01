@@ -1,3 +1,6 @@
+import { JadeLFGUserEntity } from './../../entity/star-citizen/lfg-user.entity';
+import { JadeUserEntity } from './../../entity/user/jade-user.entity';
+import { IJadeUser } from './../../../common/interfaces/User/jadeUser.interface';
 import { SCGameModeEntity } from './../../entity/star-citizen/game-mode.entity';
 import { SCGameSubModeEntity } from './../../entity/star-citizen/game-sub-mode.entity';
 import { DbService } from './../db.service';
@@ -36,7 +39,7 @@ export class SCCommonService {
 
         // Get what we want
         const subs = await this._subModeRepo.find({ where: where, relations: ['gameMode'] });
-        
+
         return subs;
     }
 
@@ -53,6 +56,23 @@ export class SCCommonService {
 
         const modes = await this._modeRepo.find({ where: where });
         return modes;
+    }
+
+    /**
+     * Check if an user can Look for group/members
+     * @param user the user to check against
+     */
+    public canLf(user: IJadeUser) {
+        // can't search if we don't have an handle.
+        return Boolean(user.id >= 0 && user.rsiHandle);
+    }
+
+    /**
+     * Get the full LFG packet of an user
+     * @param user the user to fetch for
+     */
+    public async getLFGOfUser(user: IJadeUser) {
+        return await Container.get(DbService).repo(JadeLFGUserEntity).findOne({ where: { user: user.id }, relations: ["gameModes", "gameSubModes"] });
     }
 
 }

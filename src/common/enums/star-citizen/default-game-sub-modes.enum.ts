@@ -17,4 +17,5 @@ export const SCDefaultGameSubModes: ISCGameSubMode[] = [
 
     // Star Citizen
     { id: 9, gameMode: SCDefaultGameModes[2], name: "Univers Persistant", custom: false },
+    { id: 10, gameMode: SCDefaultGameModes[2], name: "PTU", custom: false },
 ];

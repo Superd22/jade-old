@@ -1,3 +1,6 @@
+import { IJadeUser } from './../../common/interfaces/User/jadeUser.interface';
+import { IJadeToken } from './../../common/interfaces/jade-token';
+import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { xJadeToken } from './../../common/consts/x-jade-token.const';
 import { JWTRSISecret } from './../../bot/spectrum/config/JWT-rsi.conf';
 import { JWTSecret } from './../config/jwt.conf';
@@ -12,6 +15,7 @@ export class TestShared {
     public static commonSetUp() {
         const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 
+        
         jasmine.getEnv().clearReporters();               // remove default reporter logs
         jasmine.getEnv().addReporter(new SpecReporter({  // add jasmine-spec-reporter
             spec: {
@@ -62,9 +66,24 @@ export class TestShared {
         return TestShared.genToken("jade", payload);
     }
 
-    public static genToken(type: "jade" | "spectrum" = "jade", payload: any): [string, string] {
+    public static genTokenFromUser(user: IJadeUser, spread?: boolean) {
+
+        const packet = TestShared.genToken("jade", {
+            jadeUserId: user.id,
+            jadeUser: user
+        });;
+
+        if (spread) return packet;
+
+        let unspread = {};
+        unspread[packet[0]] = packet[1];
+        
+        return unspread;
+    }
+
+    public static genToken(type: "jade" | "spectrum" = "jade", payload: DeepPartial<IJadeToken>): [string, string] {
         const tokenName = () => {
-            switch(type) {
+            switch (type) {
                 case "jade": return xJadeToken;
                 case "spectrum": return "x-jade-spectrum-auth";
             }
@@ -84,4 +103,7 @@ export class TestShared {
         return TestShared.genToken("spectrum", payload);
     }
 
+    public static get randomString(): string {
+        return String(Math.floor(Math.random() * 9e15));
+    }
 }

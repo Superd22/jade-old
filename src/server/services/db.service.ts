@@ -81,4 +81,12 @@ export class DbService {
         });
     }
 
+    public buildEntity<T, K>(model: T, EntityType: new () => K) {
+        return Object.assign(new EntityType(), model);
+    }
+
+    public async persistEntity<T>(model: T, EntityType: ObjectType<T>): Promise<T> {
+        return this.repo(EntityType).persist(model);
+    }
+
 }

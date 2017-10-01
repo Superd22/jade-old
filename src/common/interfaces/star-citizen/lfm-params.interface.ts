@@ -5,7 +5,7 @@ import { SCGameSubMode } from "../../enums/game-sub-mode.enum";
 import { ISCLFParams } from "./lf-params.interface";
 
 /**
- * Describes the paramaters for flaggin an user as looking for a group
+ * Describes the paramaters for flaggin an user as looking for members
  */
-export interface ISCLFGParams extends ISCLFParams {
+export interface ISCLFMParams extends ISCLFParams {
 }

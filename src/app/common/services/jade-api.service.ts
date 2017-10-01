@@ -33,6 +33,16 @@ export class JadeApiService {
       });
   }
 
+  public post<T>(endpoint: string, body: any): Observable<IJadeAPIResponse<T>> {
+    return this.http.post(
+      this.getEndpoint(endpoint), body, this.commonParams()
+    ).map(
+      (response: HttpResponse<IJadeAPIResponse<T>>) => {
+        this.handleResponseToken(response);
+        return response.body;
+      });
+  }
+
   public patch<T>(endpoint: string, body: any): Observable<IJadeAPIResponse<T>> {
     return this.http.patch(
       this.getEndpoint(endpoint), body, this.commonParams()

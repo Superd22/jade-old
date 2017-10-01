@@ -29,18 +29,13 @@ export class AuthVerifyHandleCommand implements aSpectrumCommand {
             let oldUser = await userRepo.findOne({ rsiHandle: handle });
             if (oldUser) { oldUser.removeHandle(); await userRepo.persist(oldUser); }
 
-            console.log("pre persist", user);
             // Now we can set the handle to the current user
             user.setHandle(handle, true);
-            console.log("pre presit new", user);
             await userRepo.persist(user);
 
-            console.log("post persist");
 
             lobby.sendPlainTextMessage("[BOT] Votre handle a bien été confirmé, félicitations !");
         }
-
-        console.log(user);
     };
     public name = "Auth - Verify handle";
     public manual = "Displays whether or not the bot is currently up and running.";

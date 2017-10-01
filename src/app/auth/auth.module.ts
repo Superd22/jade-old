@@ -2,7 +2,7 @@ import { OauthSCFRService } from './services/oauth-scfr.service';
 import { AuthRoutes } from './routes/_.routes';
 import { RouterModule } from '@angular/router';
 import { OauthDiscordService } from './services/oauth-discord.service';
-import { MdFormFieldModule, MdInputModule, MdButtonModule, MatExpansionModule, MatCardModule, MatIconModule } from '@angular/material';
+import { MdFormFieldModule, MdInputModule, MdButtonModule, MatExpansionModule, MatCardModule, MatIconModule, MatProgressSpinnerModule } from '@angular/material';
 import { JadeMaterialModule } from './../material/material.module';
 import { IdentifyService } from './services/identify.service';
 import { ServiceLocator } from './services/service-locator';
@@ -23,6 +23,7 @@ import { AuthRedirectComponent } from './components/auth-redirect/auth-redirect.
     MatExpansionModule,
     FormsModule, MatCardModule,
     MatIconModule,
+    MatProgressSpinnerModule,
     HttpClientModule,
     RouterModule.forChild(AuthRoutes),
   ],

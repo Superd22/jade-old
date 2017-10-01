@@ -13,15 +13,15 @@ export class JadeLFGUserEntity {
     /** the user we belong to */
     @OneToOne(type => JadeUserEntity, user => user.lfg)
     @JoinColumn()
-    user: JadeUserEntity = null;
+    user: JadeUserEntity;
 
     /** the game mode we're currently looking for */
     @ManyToMany(type => SCGameModeEntity)
     @JoinTable()
-    gameMode: SCGameModeEntity[];
+    gameModes: SCGameModeEntity[];
 
     /** the game sub-modes we're currently looking for */
     @ManyToMany(type => SCGameSubModeEntity)
     @JoinTable()
-    gameSubMode: SCGameSubModeEntity[];
+    gameSubModes: SCGameSubModeEntity[];
 }

@@ -83,9 +83,6 @@ describe("/spectrum", () => {
             expect(newUser.auth.handle_trusted).toBe(true);
             console.log("was", authedUser);
 
-            // Remove our test user
-            await Container.get(DbService).repo(JadeUserEntity).remove(authedUser);
-
             done();
         });
     });

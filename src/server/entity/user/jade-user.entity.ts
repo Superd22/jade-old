@@ -28,15 +28,13 @@ export class JadeUserEntity implements IJadeUser {
     rsiAvatar: string = "";
 
     @OneToOne(type => JadeUserAuthEntity, auth => auth.user, { cascadeInsert: true, cascadeUpdate: true, cascadeRemove: true })
-    auth: JadeUserAuthEntity = null;
+    auth: JadeUserAuthEntity;
 
-    @OneToOne(type => JadeLFGUserEntity, lfg => lfg.user, { cascadeInsert: true, cascadeUpdate: true })
-    @JoinColumn()
-    lfg: JadeLFGUserEntity = null;
+    @OneToOne(type => JadeLFGUserEntity, lfg => lfg.user, { cascadeInsert: true, cascadeUpdate: true, cascadeRemove: true })
+    lfg: JadeLFGUserEntity;
 
     @OneToOne(type => JadeUserHandleCodeEntity, handle => handle.user, { cascadeInsert: true, cascadeUpdate: true, cascadeRemove: true })
-    @JoinColumn()
-    _handleCode: JadeUserHandleCodeEntity = null;
+    _handleCode: JadeUserHandleCodeEntity;
 
 
     /**
