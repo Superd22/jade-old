@@ -41,7 +41,7 @@ export class UserRegisterService {
      */
     public async findUserFromId(jadeUserId: number): Promise<IJadeUser> {
         const user = await this.db.repo(JadeUserEntity).findOne(
-            { where: { id: jadeUserId }, relations: ['_handleCode', 'auth', 'lfg'] }
+            { where: { id: jadeUserId }, relations: ['_handleCode', 'auth', 'lfg', 'group'] }
         );
         if (user) {
             // Check our LFG status and build it if necesserary 

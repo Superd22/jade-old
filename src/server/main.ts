@@ -1,7 +1,6 @@
 import { ExpressService } from './services/express.service';
 import { WebSocketService } from './services/websocket.service';
 import { UserRegisterService } from './services/user-register.service';
-import { SCGameRoomTextMessageEntity } from './entity/star-citizen/game-room-text-message.entity';
 import { JadeUserEntity } from './entity/user/jade-user.entity';
 import { SCGameRoomEntity } from './entity/star-citizen/game-room.entity';
 import { createExpressServer, useContainer as routeUseContainer, Action } from "routing-controllers";

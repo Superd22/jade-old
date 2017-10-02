@@ -1,3 +1,6 @@
+import { JadeUserEntity } from './../entity/user/jade-user.entity';
+import { DbService } from './../services/db.service';
+import { Container } from 'typedi';
 import { IJadeUser } from './../../common/interfaces/User/jadeUser.interface';
 import { IJadeToken } from './../../common/interfaces/jade-token';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
@@ -15,7 +18,7 @@ export class TestShared {
     public static commonSetUp() {
         const SpecReporter = require('jasmine-spec-reporter').SpecReporter;
 
-        
+
         jasmine.getEnv().clearReporters();               // remove default reporter logs
         jasmine.getEnv().addReporter(new SpecReporter({  // add jasmine-spec-reporter
             spec: {
@@ -77,8 +80,19 @@ export class TestShared {
 
         let unspread = {};
         unspread[packet[0]] = packet[1];
-        
+
         return unspread;
+    }
+
+    public static async newUserAndAuth(user: DeepPartial<IJadeUser>) {
+        let u = await TestShared.newUser(user);
+
+        return TestShared.genTokenFromUser(u);
+    }
+
+    public static async newUser(user: DeepPartial<IJadeUser>) {
+        let u = Object.assign(new JadeUserEntity, user);
+        return await Container.get(DbService).repo(JadeUserEntity).persist(u);
     }
 
     public static genToken(type: "jade" | "spectrum" = "jade", payload: DeepPartial<IJadeToken>): [string, string] {

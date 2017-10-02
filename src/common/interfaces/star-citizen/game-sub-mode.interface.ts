@@ -1,7 +1,8 @@
 import { ISCGameMode } from './game-mode.interface';
-export interface ISCGameSubMode {
+
+export interface ISCGameSubMode<T=number> {
     id: number;
     name: string;
-    gameMode: ISCGameMode;
+    gameMode: ISCGameMode<T>;
     custom: boolean;
 }

@@ -1,3 +1,4 @@
+import { ISCGameRoom } from './../star-citizen/group.interface';
 import { IJadeUserHandleCode } from './jade-user-handle-code.interface';
 import { IJadeUserAuth } from './jade-user-auth.interface';
 import { IJadeUserLFG } from './jade-user-lfg.interface';
@@ -16,4 +17,5 @@ export interface IJadeUser {
     auth?: IJadeUserAuth;
     _handleCode?: IJadeUserHandleCode;
     lfg?: IJadeUserLFG;
+    group?: ISCGameRoom;
 }

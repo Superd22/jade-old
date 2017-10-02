@@ -1,10 +1,12 @@
+import { ISCGameRoom } from './../../../common/interfaces/star-citizen/group.interface';
+import { SCGameRoomEntity } from './../star-citizen/game-room.entity';
 import { DbService } from './../../services/db.service';
 import { JadeUserHandleCodeEntity } from './jade-user-handle-code.entity';
 import { Container } from 'typedi';
 import { JadeLFGUserEntity } from './../star-citizen/lfg-user.entity';
 import { JadeUserAuthEntity } from './jade-user-auth.entity';
 import { IJadeUser } from '../../../common/interfaces/User/jadeUser.interface';
-import { Entity, PrimaryGeneratedColumn, Column, Index, OneToOne, JoinColumn, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, Index, OneToOne, JoinColumn, OneToMany, ManyToOne } from "typeorm";
 import { oAuthProviders } from '../../../common/enums/oauth-providers.enum';
 
 @Entity()
@@ -35,6 +37,9 @@ export class JadeUserEntity implements IJadeUser {
 
     @OneToOne(type => JadeUserHandleCodeEntity, handle => handle.user, { cascadeInsert: true, cascadeUpdate: true, cascadeRemove: true })
     _handleCode: JadeUserHandleCodeEntity;
+
+    @ManyToOne(type => SCGameRoomEntity, gameroom => gameroom.players)
+    group: SCGameRoomEntity;
 
 
     /**
@@ -95,6 +100,26 @@ export class JadeUserEntity implements IJadeUser {
 
     private async removeCodeForHandle() {
         if (this._handleCode) await Container.get(DbService).repo(JadeUserHandleCodeEntity).remove(this._handleCode);
+    }
+
+    /**
+     * Removes the LFG status for this user
+     */
+    public async removeLFG() {
+        if (this.lfg) {
+            await Container.get(DbService).repo(JadeLFGUserEntity).remove(this.lfg);
+            this.lfg = null;
+        }
+    }
+
+    /**
+     * Set the group (active game-room) for this user
+     * 
+     * @param group the group we want to go to
+     */
+    public async setGroup(group: SCGameRoomEntity) {
+        this.removeLFG();
+        this.group = group;
     }
 
 }

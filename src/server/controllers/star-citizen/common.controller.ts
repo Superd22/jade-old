@@ -1,6 +1,6 @@
-import { APIResponse } from './../../../services/api-response.service';
+import { APIResponse } from './../../services/api-response.service';
 import { Container } from 'typedi';
-import { SCCommonService } from './../../../services/star-citizen/common-sc.service';
+import { SCCommonService } from './../../services/star-citizen/common-sc.service';
 import { JsonController } from 'routing-controllers';
 import { Get } from 'routing-controllers';
 

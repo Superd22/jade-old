@@ -1,12 +1,12 @@
 import { Container } from 'typedi';
-import { JadeUserAuthEntity } from './../../../entity/user/jade-user-auth.entity';
-import { JadeLFGUserEntity } from './../../../entity/star-citizen/lfg-user.entity';
-import { DbService } from './../../../services/db.service';
-import { APIResponse } from './../../../services/api-response.service';
-import { SCCommonService } from './../../../services/star-citizen/common-sc.service';
-import { ISCLFGParams } from './../../../../common/interfaces/star-citizen/lfg-params.interface';
+import { JadeUserAuthEntity } from './../../entity/user/jade-user-auth.entity';
+import { JadeLFGUserEntity } from './../../entity/star-citizen/lfg-user.entity';
+import { DbService } from './../../services/db.service';
+import { APIResponse } from './../../services/api-response.service';
+import { SCCommonService } from './../../services/star-citizen/common-sc.service';
+import { ISCLFGParams } from './../../../common/interfaces/star-citizen/lfg-params.interface';
 import { Delete } from 'routing-controllers';
-import { JadeUserEntity } from './../../../entity/user/jade-user.entity';
+import { JadeUserEntity } from './../../entity/user/jade-user.entity';
 import { CurrentUser, Patch, Get, JsonController, Body } from 'routing-controllers';
 
 @JsonController("/sc/lfg")
