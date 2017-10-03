@@ -1,3 +1,4 @@
+import { ISCGameMode } from './../../../common/interfaces/star-citizen/game-mode.interface';
 import { ISCGameRoom } from './../../../common/interfaces/star-citizen/group.interface';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { SCGameRoomEntity } from './../../entity/star-citizen/game-room.entity';
@@ -29,14 +30,14 @@ export class APISCLFGController {
     @Post('/list')
     public async listMembers( @CurrentUser() user: JadeUserEntity, @Body() body: ISCLFSearchParams) {
 
-        let where = { gameModes: [SCDefaultGameModes[0].id] };
+        let where = { };
 
 
         const limit = body.limit;
         const start = body.start;
 
-        let gameModesCondition = this.getInConditionFrom(body.gameModes || [], "gameModes.id");
-        let gameSubModesCondition = this.getInConditionFrom(body.gameSubModes || [], "gameSubModes.id");
+        let gameModesCondition = this.sc.getInConditionFrom(body.gameModes || [], "gameModes.id");
+        let gameSubModesCondition = this.sc.getInConditionFrom(body.gameSubModes || [], "gameSubModes.id");
 
         // Build our query
         const search = await Container.get(DbService).repo(JadeLFGUserEntity).createQueryBuilder("lfg")
@@ -61,13 +62,16 @@ export class APISCLFGController {
      * @param user the user creating the game room
      * @param body the game room infos
      */
-    @Put("/game-room")
-    private async createGameRoom( @CurrentUser() user: JadeUserEntity, @Body() room: DeepPartial<ISCGameRoom>) {
+    @Patch("/game-room")
+    public async createGameRoom( @CurrentUser() user: JadeUserEntity, @Body() room: ISCGameRoom) {
         if (!this.sc.canLf(user)) return APIResponse.err("must be authed to create a group");
         if (user.group && user.group.isActive) return APIResponse.err("you already have an active group");
+        if (!this.sc.userCanEditRoom(user, room)) return APIResponse.err("you don't have the rights to edit this.");
 
         let gameRoom = new SCGameRoomEntity();
         gameRoom = Object.assign(gameRoom, room);
+
+        if (!gameRoom.id) gameRoom.createdBy = user;
 
         await this.db.repo(SCGameRoomEntity).persist(gameRoom);
 
@@ -78,13 +82,26 @@ export class APISCLFGController {
     }
 
     /**
-     * Returns the sql IN clause for a given collection of object
-     * @param collection the collection with ids
-     * @param column the column name to check against
+     * Deletes a game room
+     * @param user 
+     * @param room 
      */
-    private getInConditionFrom(collection?: { id: number }[], column?: string): string {
-        if (!collection || collection.length <= 0) return "";
-        else return column + " IN (" + collection.map((item) => item.id).join(",") + ")";
+    @Delete("/game-room")
+    public async deleteGameRoom( @CurrentUser() user: JadeUserEntity, @Body() room: ISCGameRoom) {
+        if (!this.sc.userCanEditRoom(user, room)) return APIResponse.err("you don't have the rights to edit this.");
+
+        // Get the room
+        const dbRoom = await this.db.repo(SCGameRoomEntity).findOneById(room.id, { relations: ["players"] });
+
+        // Remove every player
+        dbRoom.players.map((player) => {
+            player.setGroup(null);
+        });
+
+        // And remove the room
+        await this.db.repo(SCGameRoomEntity).remove(dbRoom);
+
+        return APIResponse.send(true);
     }
 
 }

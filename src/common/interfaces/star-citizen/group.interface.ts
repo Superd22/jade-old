@@ -10,12 +10,13 @@ export interface ISCGameRoom<T=number> {
     title: string,
     description: string,
     gameMode: ISCGameMode<T>,
-    gameSubMode: ISCGameSubMode<T>[],
+    gameSubModes: ISCGameSubMode<T>[],
     status: ISCGroupStatus,
     players: IJadeUser[],
     createdAt: any,
     createdBy: IJadeUser,
     maxPlayers: number;
+    hashId: string;
 }
 
 export type ISCGroupStatus = "pre" | "playing" | "inactive";

@@ -2,3 +2,20 @@
   <md-spinner></md-spinner>
 </div>
 
+<div *ngIf="!busy">
+
+  <div class="error" *ngIf="error">
+    {{error}}
+  </div>
+
+  <div class="success" *ngIf="!error">
+    <h2>Succès!</h2>
+    <span>Ton compte Jade est maintenant lié à {{provider}}</span>
+
+    <img [src]="providerLogo">
+
+    <em>Tu va être redirigé d'ici quelques courtes secondes vers l'accueil</em>
+    <button md-button><a routerLink="/">Clique ici pour ne pas attendre.</a></button>
+  </div>
+
+</div>

@@ -21,7 +21,7 @@ describe("/sc/lfm", () => {
 
     describe("PUT /game-room", () => {
         it("Should throw on unidentified", async (done) => {
-            const response = await TestBootStrap.api.put("/sc/lfm/game-room");
+            const response = await TestBootStrap.api.patch("/sc/lfm/game-room");
 
             TestShared.apiError(response.body);
             done();
@@ -29,7 +29,7 @@ describe("/sc/lfm", () => {
 
 
         it("Should throw on no LFParams", async (done) => {
-            const response = await TestBootStrap.api.put("/sc/lfm/game-room").set(TestShared.newUserAndAuth({
+            const response = await TestBootStrap.api.patch("/sc/lfm/game-room").set(TestShared.newUserAndAuth({
                 rsiHandle: TestShared.randomString,
             }));
 

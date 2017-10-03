@@ -31,7 +31,8 @@ export class AuthboxComponent implements OnInit {
 
 
     // Every time we change token we wanna check a few thingies.
-    identify.jadeIdentifySubject.filter((token) => Boolean(token)).subscribe((token) => {
+    identify.jadeIdentifySubject.subscribe((token) => {
+      if(!token) return;
       this.currentIdent = token.jadeUser;
       this.currentHandle = token.jadeUser.rsiHandle;
       this.currentDossier = null;

@@ -1,3 +1,4 @@
+import { HashSecret } from './../config/hash.conf';
 import { SCGameSubModeEntity } from './../entity/star-citizen/game-sub-mode.entity';
 import { SCDefaultGameSubModes } from './../../common/enums/star-citizen/default-game-sub-modes.enum';
 import { SCDefaultGameModes } from './../../common/enums/star-citizen/default-game-modes.enum';
@@ -6,7 +7,7 @@ import { JadeMysqlConfig } from './../../common/config/mysql.conf';
 import { Service, Container, ObjectType } from "typedi";
 import { createConnection, Connection, useContainer } from "typeorm";
 import { ReplaySubject } from "rxjs";
-
+var Hashids = require('hashids');
 
 /**
  * Main db service
@@ -20,6 +21,9 @@ export class DbService {
     public get connectionSubject(): ReplaySubject<Connection> { return this._connectionSub; }
     /** async active connection object */
     public get connection(): Promise<Connection> { return this.connectionSubject.asObservable().first().toPromise(); }
+
+    /** our hash helper */
+    public hashIds = new Hashids(HashSecret, 8);
 
     private _co: Connection;
 
@@ -44,6 +48,7 @@ export class DbService {
             await this.populateDbWithConsts();
             this._connectionSub.next(connection);
         }).catch(error => console.log(error));
+
     }
 
     /**

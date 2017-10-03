@@ -1,3 +1,4 @@
+import { JadeApiService } from './../../../../common/services/jade-api.service';
 import { ISCGameRoom } from './../../../../../common/interfaces/star-citizen/group.interface';
 import { SCDefaultGameModes } from './../../../../../common/enums/star-citizen/default-game-modes.enum';
 import { IDisplaySCMode } from './../../../interfaces/sc-game-mode.interface';
@@ -19,7 +20,7 @@ export class LfmCreateComponent implements OnInit {
   public displayModes: IDisplaySCMode[] = SCDefaultGameModes;
 
   /** currently selected modes */
-  public get selectedModes(): IDisplaySCMode[] { return this.displayModes.filter((mode) => mode.selected); }
+  public get selectedMode(): IDisplaySCMode { return this.displayModes.find((mode) => mode.selected); }
 
   /** currently selected sub modes */
   public get selectedSubModes(): IDisplaySCSubMode[] { return this.displaySubModes.filter((submode) => submode.selected); }
@@ -27,8 +28,19 @@ export class LfmCreateComponent implements OnInit {
   /** the group object we're creating */
   public group: ISCGameRoom = <ISCGameRoom>{};
 
+  /** group object as expected by the back-end */
+  public get groupSend(): ISCGameRoom {
+    return Object.assign({}, this.group, {
+      gameMode: this.selectedMode,
+      subGameMode: this.selectedSubModes
+    });
+  }
 
-  constructor() { }
+  /** if it is a new group or an existing one */
+  public get isNewGroup(): boolean { return Boolean(this.group.id >= 0); }
+
+
+  constructor(protected api: JadeApiService) { }
 
   ngOnInit() {
   }
@@ -39,8 +51,21 @@ export class LfmCreateComponent implements OnInit {
    * @param mode the mode to toggle on
    */
   public toggleMode(mode: IDisplaySCMode) {
+    // Unselect every mods
     this.displayModes.map((m) => m.selected = false);
+    // Unselect every wrongly selected submodes
+    this.selectedSubModes.map((sm) => { if (sm.gameMode.id !== mode.id) sm.selected = false });
+    // select this mode
     mode.selected = true;
+  }
+
+  /**
+   * Send group to back-end
+   */
+  public submit() {
+    this.api.patch<ISCGameRoom>("sc/lfm/game-room", this.groupSend).subscribe((newGroup) => {
+      console.log(newGroup);
+    });
   }
 
 }

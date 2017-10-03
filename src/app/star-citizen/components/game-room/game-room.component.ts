@@ -1,3 +1,6 @@
+import { ActivatedRoute } from '@angular/router';
+import { ISCGameRoom } from './../../../../common/interfaces/star-citizen/group.interface';
+import { JadeApiService } from './../../../common/services/jade-api.service';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -7,9 +10,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GameRoomComponent implements OnInit {
 
-  constructor() { }
+  private _hash: string;
+  private group: ISCGameRoom;
+
+  constructor(protected api: JadeApiService, protected route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.route.paramMap.subscribe((params) => {
+      console.log(params);
+      this._hash = params.get("hashId");
+      this.fetchGroup();
+    });
+  }
+
+  public fetchGroup() {
+    this.api.get<ISCGameRoom>("sc/lfg/group/" + this._hash).subscribe((data) => {
+      this.group = data.data;
+    });
   }
 
 }

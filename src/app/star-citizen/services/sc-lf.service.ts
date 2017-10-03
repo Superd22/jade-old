@@ -44,7 +44,6 @@ export class ScLfService {
    */
   public removeLfg() {
     this._lfParam.next(null);
-
   }
 
   /**

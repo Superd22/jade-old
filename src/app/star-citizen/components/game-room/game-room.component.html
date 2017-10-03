@@ -1,3 +1,7 @@
-<p>
-  game-room works!
-</p>
+<h2>
+  {{group?.title}}
+</h2>
+
+<div *ngIf="!group" class="error">
+  <p>404!</p>
+</div>

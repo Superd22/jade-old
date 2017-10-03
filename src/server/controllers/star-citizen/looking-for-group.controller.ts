@@ -1,3 +1,6 @@
+import { SCGameRoomEntity } from './../../entity/star-citizen/game-room.entity';
+import { SCDefaultGameModes } from './../../../common/enums/star-citizen/default-game-modes.enum';
+import { ISCLFSearchParams } from './../../../common/interfaces/star-citizen/lf-search-params.interface';
 import { Container } from 'typedi';
 import { JadeUserAuthEntity } from './../../entity/user/jade-user-auth.entity';
 import { JadeLFGUserEntity } from './../../entity/star-citizen/lfg-user.entity';
@@ -7,17 +10,58 @@ import { SCCommonService } from './../../services/star-citizen/common-sc.service
 import { ISCLFGParams } from './../../../common/interfaces/star-citizen/lfg-params.interface';
 import { Delete } from 'routing-controllers';
 import { JadeUserEntity } from './../../entity/user/jade-user.entity';
-import { CurrentUser, Patch, Get, JsonController, Body } from 'routing-controllers';
+import { CurrentUser, Patch, Get, JsonController, Body, Post, Param } from 'routing-controllers';
 
 @JsonController("/sc/lfg")
 export class APISCLFGController {
 
+    protected sc: SCCommonService = Container.get(SCCommonService);
+    protected db: DbService = Container.get(DbService);
+
     /**
      * List all the currently active groups
      */
-    @Get('/')
-    public listGroups() {
+    @Post('/list')
+    public async listGroups( @CurrentUser() user: JadeUserEntity, @Body() body: ISCLFSearchParams) {
+        let where = {};
 
+        const limit = body.limit;
+        const start = body.start;
+
+        let gameModesCondition = this.sc.getInConditionFrom(body.gameModes || [], "gameMode.id");
+        let gameSubModesCondition = this.sc.getInConditionFrom(body.gameSubModes || [], "gameSubModes.id");
+
+        // Build our query
+        const search = await Container.get(DbService).repo(SCGameRoomEntity).createQueryBuilder("room")
+            .leftJoinAndSelect("room.players", "players")
+            .leftJoinAndSelect("room.createdBy", "createdBy")
+            // Take only the game modes we want (or every gamemodes of every lfg if no condition)
+            .innerJoinAndSelect("room.gameMode", "gameMode", gameModesCondition)
+            // Take every game sub modes 
+            .leftJoinAndSelect("room.gameSubModes", "gameSubModes")
+            // Filter by our sub modes condition
+            .where(gameSubModesCondition)
+            // limit
+            .take(limit)
+            // start
+            .skip(start)
+            .getManyAndCount();
+
+        return APIResponse.send(search);
+    }
+
+    /**
+     * Get a group by its unique hash
+     * @param hash unique hashId 
+     */
+    @Get('/group/:hashId')
+    public async getGroup( @Param("hashId") hash: string) {
+        if (!hash) return APIResponse.err("must supply a group");
+
+        const id = Number(Container.get(DbService).hashIds.decode(hash)[0]);
+        const group = await Container.get(DbService).repo(SCGameRoomEntity).findOneById(id, { relations: ['players', 'createdBy'] });
+
+        return APIResponse.send(group);
     }
 
     /**
@@ -61,7 +105,7 @@ export class APISCLFGController {
      */
     @Delete('/lfg-user')
     public async deleteUserLfg( @CurrentUser() user: JadeUserEntity) {
-        if(!user.lfg) return APIResponse.send(true);
+        if (!user.lfg) return APIResponse.send(true);
         return APIResponse.send(await Container.get(DbService).repo(JadeLFGUserEntity).remove(user.lfg));
     }
 }

@@ -10,11 +10,15 @@ import { RouterModule } from '@angular/router';
 import { MatStepperModule, MatSlideToggleModule, MatChipsModule, MatInputModule, MatButtonModule, MatCardModule, MatListModule, MatExpansionModule, MatSliderModule } from '@angular/material';
 import { LfgCriteresComponent } from './components/looking-for-group/lfg-criteres/lfg-criteres.component';
 import { LfgContactComponent } from './components/looking-for-group/lfg-contact/lfg-contact.component';
-import { LfgGroupesComponent } from './components/looking-for-group/lfg-groupes/lfg-groupes.component';
 import { ScSubModeByModePipe } from './pipes/sc-sub-mode-by-mode.pipe';
 import { LookingForMembersComponent } from './components/looking-for-members/looking-for-members.component';
 import { LfmMembersComponent } from './components/looking-for-members/lfm-members/lfm-members.component';
 import { LfmCreateComponent } from './components/looking-for-members/lfm-create/lfm-create.component';
+import { StatusBoxComponent } from './components/status-box/status-box.component';
+import { LfgGroupesComponent } from './components/looking-for-group/lfg-groupes/lfg-groupes.component';
+import { MiniGroupComponent } from './components/looking-for-group/lfg-groupes/mini-group/mini-group.component';
+import { MiniGameModeComponent } from './components/common/mini-game-mode/mini-game-mode.component';
+
 
 @NgModule({
   imports: [
@@ -32,6 +36,8 @@ import { LfmCreateComponent } from './components/looking-for-members/lfm-create/
     RouterModule.forChild(SCRoutes)
   ],
   providers: [ScLfService],
-  declarations: [GameRoomComponent, LandingPageComponent, LookingForGroupComponent, LfgCriteresComponent, LfgContactComponent, LfgGroupesComponent, ScSubModeByModePipe, LookingForMembersComponent, LfmMembersComponent, LfmCreateComponent]
+  exports: [StatusBoxComponent],
+  declarations: [GameRoomComponent, LandingPageComponent, LookingForGroupComponent, LfgCriteresComponent, LfgContactComponent,
+    LfgGroupesComponent, ScSubModeByModePipe, LookingForMembersComponent, LfmMembersComponent, LfmCreateComponent, StatusBoxComponent, MiniGroupComponent, MiniGameModeComponent]
 })
 export class StarCitizenModule { }

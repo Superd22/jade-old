@@ -1,3 +1,5 @@
+import { SCGameRoomEntity } from './../../entity/star-citizen/game-room.entity';
+import { ISCGameRoom } from './../../../common/interfaces/star-citizen/group.interface';
 import { JadeLFGUserEntity } from './../../entity/star-citizen/lfg-user.entity';
 import { JadeUserEntity } from './../../entity/user/jade-user.entity';
 import { IJadeUser } from './../../../common/interfaces/User/jadeUser.interface';
@@ -75,4 +77,31 @@ export class SCCommonService {
         return await Container.get(DbService).repo(JadeLFGUserEntity).findOne({ where: { user: user.id }, relations: ["gameModes", "gameSubModes"] });
     }
 
+    /**
+     * Check if the user can edit a room
+     * @param user the user to check against
+     * @param room the room to check against
+     */
+    public async userCanEditRoom(user: IJadeUser, room: ISCGameRoom): Promise<boolean> {
+        if (!this.canLf(user)) return false;
+        // Room doesn't exist, no need to check
+        if (!room.id) return true;
+        // User is not logged in
+        if (!user.id) return false;
+
+        let dbRoom = await Container.get(DbService).repo(SCGameRoomEntity).findOneById(room.id, { relations: ['createdBy'] });
+
+        return dbRoom.createdBy.id === user.id;
+    }
+
+
+    /**
+     * Returns the sql IN clause for a given collection of object
+     * @param collection the collection with ids
+     * @param column the column name to check against
+     */
+    public getInConditionFrom(collection?: { id: number }[], column?: string): string {
+        if (!collection || collection.length <= 0) return "";
+        else return column + " IN (" + collection.map((item) => item.id).join(",") + ")";
+    }
 }

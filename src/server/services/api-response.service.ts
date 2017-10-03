@@ -12,11 +12,29 @@ import * as jwt from "jsonwebtoken";
 
 export class APIResponse {
     public static send(data: any, msg = "OK"): IJadeAPIResponseSuccess {
-        return { data: data, msg: msg, error: false };
+        return { data: APIResponse.checkIds(data), msg: msg, error: false };
     }
 
     public static err(msg: string, data?: any): IJadeAPIResponseError {
-        return { data: data, msg: msg, error: true };
+        return { data: APIResponse.checkIds(data), msg: msg, error: true };
+    }
+
+
+    /**
+     * Offuscate ids that need to be.
+     * @param data 
+     */
+    public static checkIds(data: any) {
+        if (data['id'] && data['hashId']) data['id'] = null;
+
+        // If we're iterable, check children
+        if (typeof data === typeof [] || typeof data === typeof {}) {
+            for (let subData of data) {
+                subData = APIResponse.checkIds(subData);
+            }
+        }
+
+        return data;
     }
 
     /**
