@@ -9,9 +9,12 @@ import { ISCGameRoom, ISCGroupStatus } from './../../../common/interfaces/star-c
 import { JadeUserEntity } from './../user/jade-user.entity';
 import { Entity, PrimaryGeneratedColumn, Column, Index, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, AfterLoad, AfterInsert } from "typeorm";
 import { ISCDefaultGameMode } from "./../../../common/enums/game-mode.enum";
+import { HashIdEntity } from '../hash-id.entity';
 
 @Entity()
-export class SCGameRoomEntity<gameModeId=number> implements ISCGameRoom {
+export class SCGameRoomEntity<gameModeId=number> extends HashIdEntity implements ISCGameRoom {
+    protected _hashModuleName = "gameroom";
+
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -44,16 +47,6 @@ export class SCGameRoomEntity<gameModeId=number> implements ISCGameRoom {
     @Column("integer")
     maxPlayers: number;
 
-    hashId: string;
-
-    /**
-     * Will generate uid for this entity
-     */
-    @AfterLoad()
-    @AfterInsert()
-    private genHash() {
-        this.hashId = Container.get(DbService).hashIds.encode(this.id);
-    }
 
     /**
      * If the current group is active

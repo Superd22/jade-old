@@ -1,0 +1,17 @@
+<md-expansion-panel>
+  <md-expansion-panel-header>
+    <md-panel-title>
+      <jade-mini-game-mode [gameMode]="group.gameMode"></jade-mini-game-mode>
+      {{group.title}}
+    </md-panel-title>
+    <md-panel-description>
+      {{group.description}}
+    </md-panel-description>
+  </md-expansion-panel-header>
+
+
+
+  <md-action-row>
+    <button md-button [routerLink]="['/GameRoom/', group.hashId]">Voir le groupe</button>
+  </md-action-row>
+</md-expansion-panel>

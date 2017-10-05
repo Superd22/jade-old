@@ -3,6 +3,7 @@ import { xJadeToken } from './../../../common/consts/x-jade-token.const';
 import { IJadeAPIResponse, IJadeAPIResponseSuccess, IJadeAPIResponseError } from './../../../common/interfaces/api-response';
 import { Observable } from 'rxjs/Observable';
 import { HttpClient } from '@angular/common/http';
+import { IJadeToken } from './../../../common/interfaces/jade-token';
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
@@ -19,6 +20,8 @@ export class JadeApiService {
    * @todo dynamic env
    */
   protected _api = "http://192.168.1.25:3001/";
+
+  public get identity(): IJadeToken { return this.identify.jadeIdentifySubject.getValue(); }
 
   constructor(protected http: HttpClient, protected identify: IdentifyService) {
   }

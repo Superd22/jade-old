@@ -7,7 +7,7 @@ import { JadeApiService } from './../../common/services/jade-api.service';
 import { ISCGameSubMode } from './../../../common/interfaces/star-citizen/game-sub-mode.interface';
 import { ISCGameMode } from './../../../common/interfaces/star-citizen/game-mode.interface';
 import { Injectable } from '@angular/core';
-
+import { ISCGameRoom } from '../../../common/interfaces/star-citizen/group.interface';
 /**
  * Main service for every "Looking For" actions
  */
@@ -61,6 +61,14 @@ export class ScLfService {
     return this.api.post<[IJadeUserLFG, number]>("sc/lfm/list", searchParams).map((data) => {
       return data;
     });
+
+  }
+
+  /**
+   * Checks if the current has rights on the given group
+   * @param group the group to check against
+   */
+  public hasRightOnGroup(group: ISCGameRoom) {
 
   }
 

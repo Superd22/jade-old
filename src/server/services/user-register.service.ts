@@ -31,7 +31,7 @@ export class UserRegisterService {
      */
     public async findUserFromToken(token: string): Promise<IJadeUser> {
         let payload = this.getTokenData(token);
-        
+
         return await this.findUserFromId(payload ? payload.jadeUserId : -1);
     }
 
@@ -46,6 +46,8 @@ export class UserRegisterService {
         if (user) {
             // Check our LFG status and build it if necesserary 
             user.lfg = await Container.get(SCCommonService).getLFGOfUser(user);
+            // Build group status
+            //user.group = await Container.get(SCCommonService).getGroupOfUser(user);
 
             return user;
         }

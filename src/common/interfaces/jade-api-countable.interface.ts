@@ -1,0 +1,1 @@
+export type IJadeAPICountable<T=any> = [T[], number];

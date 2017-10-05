@@ -1,0 +1,8 @@
+.gameMode {    
+    padding: 0px 12px;
+    border-radius: 40px;
+    
+    &.arena-commander {
+        background:red;
+    }
+}

@@ -78,6 +78,14 @@ export class SCCommonService {
     }
 
     /**
+     * Get the full group packet of an user
+     * @param user the user to fetch for
+     */
+    public async getGroupOfUser(user: IJadeUser) {
+        return await Container.get(DbService).repo(SCGameRoomEntity).findOne({ where: { createdBy: user.id }, relations: ['createdBy', 'players'] });
+    }
+
+    /**
      * Check if the user can edit a room
      * @param user the user to check against
      * @param room the room to check against

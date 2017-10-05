@@ -23,7 +23,7 @@ export class DbService {
     public get connection(): Promise<Connection> { return this.connectionSubject.asObservable().first().toPromise(); }
 
     /** our hash helper */
-    public hashIds = new Hashids(HashSecret, 8);
+    public hashIds(moduleName = "secret") { return new Hashids(HashSecret + moduleName, 8); }
 
     private _co: Connection;
 

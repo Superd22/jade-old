@@ -8,9 +8,13 @@ import { JadeUserAuthEntity } from './jade-user-auth.entity';
 import { IJadeUser } from '../../../common/interfaces/User/jadeUser.interface';
 import { Entity, PrimaryGeneratedColumn, Column, Index, OneToOne, JoinColumn, OneToMany, ManyToOne } from "typeorm";
 import { oAuthProviders } from '../../../common/enums/oauth-providers.enum';
+import { HashIdEntity } from '../hash-id.entity';
 
 @Entity()
-export class JadeUserEntity implements IJadeUser {
+export class JadeUserEntity extends HashIdEntity implements IJadeUser {
+
+    protected _hashModuleName = "user";
+
     @PrimaryGeneratedColumn()
     id: number;
 
