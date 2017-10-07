@@ -73,7 +73,6 @@ export class APISCLFGController {
     @Patch('/lfg-user')
     public async setUserLfg( @CurrentUser() user: JadeUserEntity, @Body() body: ISCLFGParams) {
         // Check we can
-        console.log(user, !Container.get(SCCommonService).canLf(user));
         if (!Container.get(SCCommonService).canLf(user)) return APIResponse.err("Need a handle to search for group/members");
         if (!body || !body.gameModes) return APIResponse.err("Need at least one game mode");
 

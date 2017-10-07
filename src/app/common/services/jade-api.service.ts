@@ -79,7 +79,6 @@ export class JadeApiService {
   }
 
   private handleResponseToken(response: HttpResponse<IJadeAPIResponse>) {
-    console.log(response);
     if (response && response.headers.get(xJadeToken)) {
       this.identify.newToken = response.headers.get(xJadeToken);
     }
@@ -88,8 +87,7 @@ export class JadeApiService {
   private commonParams(headers?: HttpHeaders, params?: HttpParams): { observe: "response", [st: string]: any } {
 
     headers = headers || new HttpHeaders();
-    headers = headers.set(xJadeToken, this.identify.currentToken);
-
+    headers = headers.set(xJadeToken, this.identify.currentToken || "");
     params = params || new HttpParams();
 
 

@@ -1,0 +1,49 @@
+<md-form-field>
+  <input mdInput type="text" placeholder="Titre du groupe" [(ngModel)]="group.title" [disabled]="!editable">
+</md-form-field>
+<md-form-field>
+  <textarea mdInput type="text" placeholder="Description rapide" [(ngModel)]="group.description" [disabled]="!editable"></textarea>
+</md-form-field>
+
+
+
+<br />
+<span>{{ group.maxPlayers }} joueurs max</span>
+<md-slider [max]="25" [min]="2" [step]="1" [thumb-label]="true" [(ngModel)]="group.maxPlayers" [disabled]="!editable">
+</md-slider>
+
+
+<hr />
+
+
+<div class="mode-selector">
+
+  <ng-container *ngIf="editable">
+    <button md-button color="accent" (click)="toggleMode(mode)" [ngClass]="{'mat-raised-button': mode.selected}" *ngFor="let mode of displayModes">
+      {{mode.prettyName}}
+    </button>
+  </ng-container>
+
+  <ng-container #modeNotEditable *ngIf="!editable">
+    <button md-raised-button color="accent">
+      {{selectedMode.prettyName}}
+    </button>
+  </ng-container>
+
+</div>
+
+<div class="sub-modes">
+  <div class="sub-mode-pannel" [ngClass]="mode" *ngIf="selectedMode">
+    <h4>Besoin de préciser tes envies ?</h4>
+
+    <ng-container *ngFor="let submode of displaySubModes | scSubModeByMode: selectedMode">
+      <md-slide-toggle class="example-margin" [checked]="checked" [(ngModel)]="submode.selected" [disabled]="!editable">
+        {{submode.name}}
+      </md-slide-toggle>
+    </ng-container>
+
+
+  </div>
+</div>
+
+<button *ngIf="editable" [disabled]="!selectedMode" md-raised-button color="primary" (click)="submit()">Valider !</button>

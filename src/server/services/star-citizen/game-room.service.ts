@@ -36,7 +36,8 @@ export class SCGameRoomService {
      */
     public async createGameRoom(createdBy: IJadeUser, room: ISCGameRoom) {
         // Create the room
-        let gameRoom = Object.assign(new SCGameRoomEntity(), room);
+        let gameRoom: SCGameRoomEntity = await Container.get(DbService).buildNewOrGetExistingByHash(room, SCGameRoomEntity, "gameroom");
+
         // Fetch user
         let user = await Container.get(DbService).repo(JadeUserEntity).findOneById(createdBy.id)
 
@@ -52,9 +53,6 @@ export class SCGameRoomService {
 
         // prevent circular
         gameRoom.createdBy = <any>createdBy;
-
-        console.log("post", gameRoom);
-
         return gameRoom;
     }
 

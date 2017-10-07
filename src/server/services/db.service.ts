@@ -1,3 +1,4 @@
+import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { HashSecret } from './../config/hash.conf';
 import { SCGameSubModeEntity } from './../entity/star-citizen/game-sub-mode.entity';
 import { SCDefaultGameSubModes } from './../../common/enums/star-citizen/default-game-sub-modes.enum';
@@ -5,7 +6,7 @@ import { SCDefaultGameModes } from './../../common/enums/star-citizen/default-ga
 import { SCGameModeEntity } from './../entity/star-citizen/game-mode.entity';
 import { JadeMysqlConfig } from './../../common/config/mysql.conf';
 import { Service, Container, ObjectType } from "typedi";
-import { createConnection, Connection, useContainer } from "typeorm";
+import { createConnection, Connection, useContainer, FindOneOptions } from "typeorm";
 import { ReplaySubject } from "rxjs";
 var Hashids = require('hashids');
 
@@ -87,11 +88,29 @@ export class DbService {
     }
 
     public buildEntity<T, K>(model: T, EntityType: new () => K) {
-        return Object.assign(new EntityType(), model);
+        return <K>Object.assign(new EntityType(), model);
     }
 
     public async persistEntity<T>(model: T, EntityType: ObjectType<T>): Promise<T> {
         return this.repo(EntityType).persist(model);
+    }
+
+
+    /**
+     * Helper method to transform a model with an hashId to its coresponding entity
+     * @param model data model
+     * @param EntityType the db entity type
+     * @param hashModule the module to use for the hash
+     * @param relations optional relations to fetch
+     */
+    public async buildNewOrGetExistingByHash<T={ hashId?: string }, DBEntity=any>(model: T, EntityType: new () => DBEntity, hashModule: string, relations?: (keyof DBEntity)[]): Promise<DBEntity> {
+        const id = this.hashIds(hashModule).decode(model['hashId'])[0];
+
+        const findOpt: FindOneOptions<DBEntity> = relations ? { relations: relations } : {};
+
+        const fromDb = await this.repo(EntityType).findOneById(id, findOpt);
+        if (!fromDb) return this.buildEntity(model, EntityType);
+        else return Object.assign(fromDb, model);
     }
 
 }

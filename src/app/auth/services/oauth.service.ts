@@ -33,7 +33,6 @@ export abstract class OauthService {
    */
   public get_token_from_code(code: string) {
     return this.api.get("oauth/getToken/" + this.provider + "/" + code).map((data) => {
-      console.log(data);
       return data;
     });
 

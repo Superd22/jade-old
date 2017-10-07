@@ -17,7 +17,6 @@ export class GameRoomComponent implements OnInit {
 
   ngOnInit() {
     this.route.paramMap.subscribe((params) => {
-      console.log(params);
       this._hash = params.get("hashId");
       this.fetchGroup();
     });

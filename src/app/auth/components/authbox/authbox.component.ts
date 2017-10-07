@@ -60,7 +60,7 @@ export class AuthboxComponent implements OnInit {
    */
   public confirmHandle() {
     if (!this.currentDossier) return;
-
+    console.log(this.currentDossier);
     this.api.patch("identify/handle", { handle: this.currentDossier.handle, avatar: this.currentDossier.avatar }).subscribe((data) => {
       console.log(data);
     });

@@ -67,7 +67,7 @@ export class APISCLFGController {
     @Patch("/game-room")
     public async createGameRoom( @CurrentUser() user: JadeUserEntity, @Body() room: ISCGameRoom) {
         if (!this.sc.canLf(user)) return APIResponse.err("must be authed to create a group");
-        if (user.group && user.group.isActive) return APIResponse.err("you already have an active group");
+        if (user.group && user.group.isActive && !room.hashId) return APIResponse.err("you already have an active group");
         if (!this.sc.userCanEditRoom(user, room)) return APIResponse.err("you don't have the rights to edit this.");
 
 

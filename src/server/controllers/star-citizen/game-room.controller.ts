@@ -76,7 +76,7 @@ export class SCGameRoomController {
      * @param hash 
      */
     private async getGroupByHash(hash: string): Promise<SCGameRoomEntity> {
-        return await this._db.repo(SCGameRoomEntity).findOneById(Number(this._hash.decode(hash)[0]), { relations: ['players', 'createdBy'] });
+        return await this._db.repo(SCGameRoomEntity).findOneById(Number(this._hash.decode(hash)[0]), { relations: ['players', 'createdBy', 'gameMode', 'gameSubModes'] });
     }
 
 }

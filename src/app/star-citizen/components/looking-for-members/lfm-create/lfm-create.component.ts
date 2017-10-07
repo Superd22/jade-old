@@ -27,7 +27,7 @@ export class LfmCreateComponent implements OnInit {
   public get selectedSubModes(): IDisplaySCSubMode[] { return this.displaySubModes.filter((submode) => submode.selected); }
 
   /** the group object we're creating */
-  public group: ISCGameRoom = <ISCGameRoom>{};
+  public group: ISCGameRoom = <ISCGameRoom>{ userCanEdit: true };
 
   /** group object as expected by the back-end */
   public get groupSend(): ISCGameRoom {
@@ -41,7 +41,14 @@ export class LfmCreateComponent implements OnInit {
   public get isNewGroup(): boolean { return Boolean(this.group.id >= 0); }
 
 
-  constructor(protected api: ScLfService) { }
+  constructor(protected api: ScLfService) {
+    this.api.group.subscribe((data) => {
+      if(data) this.group = data;
+      else {
+        this.group = <ISCGameRoom>{ userCanEdit: true };
+      }
+    });
+  }
 
   ngOnInit() {
   }
@@ -65,8 +72,8 @@ export class LfmCreateComponent implements OnInit {
    */
   public submit() {
     this.api.createGroup(this.groupSend).subscribe((data) => {
-      if(!data.error) {
-        
+      if (!data.error) {
+
       }
     });
   }

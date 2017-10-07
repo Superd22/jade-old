@@ -28,11 +28,9 @@ export class AuthRedirectComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParamMap.subscribe((params) => {
-      console.log("p",params);
       this._code = params.get("code");
       this.provider = <any>params.get("provider");
 
-      console.log('awas', this);
       this.location.replaceState('auth/redirect');
       this.goGetToken();
     });

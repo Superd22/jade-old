@@ -18,7 +18,7 @@ import { StatusBoxComponent } from './components/status-box/status-box.component
 import { LfgGroupesComponent } from './components/looking-for-group/lfg-groupes/lfg-groupes.component';
 import { MiniGroupComponent } from './components/looking-for-group/lfg-groupes/mini-group/mini-group.component';
 import { MiniGameModeComponent } from './components/common/mini-game-mode/mini-game-mode.component';
-
+import { GameRoomFormComponent } from './components/game-room/game-room-form/game-room-form.component';
 
 @NgModule({
   imports: [
@@ -37,7 +37,7 @@ import { MiniGameModeComponent } from './components/common/mini-game-mode/mini-g
   ],
   providers: [ScLfService],
   exports: [StatusBoxComponent],
-  declarations: [GameRoomComponent, LandingPageComponent, LookingForGroupComponent, LfgCriteresComponent, LfgContactComponent,
+  declarations: [GameRoomComponent, GameRoomFormComponent, LandingPageComponent, LookingForGroupComponent, LfgCriteresComponent, LfgContactComponent,
     LfgGroupesComponent, ScSubModeByModePipe, LookingForMembersComponent, LfmMembersComponent, LfmCreateComponent, StatusBoxComponent, MiniGroupComponent, MiniGameModeComponent]
 })
 export class StarCitizenModule { }

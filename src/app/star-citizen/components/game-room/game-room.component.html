@@ -1,6 +1,7 @@
-<h2>
-  {{group?.title}}
-</h2>
+<div *ngIf="group">
+  <jade-game-room-form [group]="group"></jade-game-room-form>
+
+</div>
 
 <div *ngIf="!group" class="error">
   <p>404!</p>
