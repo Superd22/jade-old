@@ -22,6 +22,10 @@ import { oAuthProviders } from '../../common/enums/oauth-providers.enum';
 export class UserRegisterService {
     private db: DbService = Container.get(DbService);
 
+    private _currentUser: JadeUserEntity;
+    public get currentUser() { return this._currentUser; }
+
+    
     public constructor() { }
 
     /**
@@ -31,28 +35,34 @@ export class UserRegisterService {
      */
     public async findUserFromToken(token: string): Promise<IJadeUser> {
         let payload = this.getTokenData(token);
-
-        return await this.findUserFromId(payload ? payload.jadeUserId : -1);
+        
+        return await this.findUserFromId(payload ? payload.jadeUserId : -1);;
     }
 
     /**
      * Finds an user from its id
      * @param jadeUserId the id to check
      */
-    public async findUserFromId(jadeUserId: number): Promise<IJadeUser> {
+    public async findUserFromId(jadeUserId: number): Promise<JadeUserEntity> {
         const user = await this.db.repo(JadeUserEntity).findOne(
             { where: { id: jadeUserId }, relations: ['_handleCode', 'auth', 'lfg', 'group'] }
         );
         if (user) {
+            // If we're there we set the current user in order to be able to fetch the following(s)
+            this._currentUser = user;
+
             // Check our LFG status and build it if necesserary 
             user.lfg = await Container.get(SCCommonService).getLFGOfUser(user);
             // Build group status
             user.group = await Container.get(SCCommonService).getGroupOfUser(user);
-
+            
+            this._currentUser = user;
             return user;
         }
 
-        return Observable.of(new JadeUserEntity()).toPromise();
+        this._currentUser = await Observable.of(new JadeUserEntity()).toPromise();
+
+        return this._currentUser;
     }
 
     /**

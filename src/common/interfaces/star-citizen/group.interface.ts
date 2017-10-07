@@ -17,6 +17,7 @@ export interface ISCGameRoom<T=number> {
     createdBy: IJadeUser,
     maxPlayers: number;
     hashId: string;
+    userCanEdit: boolean;
 }
 
 export type ISCGroupStatus = "pre" | "playing" | "inactive";

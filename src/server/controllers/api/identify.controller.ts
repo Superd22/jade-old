@@ -20,11 +20,8 @@ export class APIIdentifyController {
     @Get("/")
     public async getIdentifyPacket( @CurrentUser({ required: true }) user: JadeUserEntity, @Res() response: Response) {
 
-        console.log("pre");
         // Ensure we have all our providers info
         await this.userService.setUserProvidersInfo(user);
-
-        console.log("userrr", user);
 
         // Current user will either validate or token, or log us as anon.
         const indentity = APIResponse.setTokenUser(response, user);

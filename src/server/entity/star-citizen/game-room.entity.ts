@@ -1,5 +1,6 @@
-import { DbService } from './../../services/db.service';
+import { UserRegisterService } from './../../services/user-register.service';
 import { Container } from 'typedi';
+import { DbService } from './../../services/db.service';
 import { IJadeUser } from './../../../common/interfaces/User/jadeUser.interface';
 import { SCGameSubModeEntity } from './game-sub-mode.entity';
 import { ISCGameSubMode } from './../../../common/interfaces/star-citizen/game-sub-mode.interface';
@@ -47,6 +48,38 @@ export class SCGameRoomEntity<gameModeId=number> extends HashIdEntity implements
     @Column("integer")
     maxPlayers: number = 2;
 
+    /** 
+     * if the current user can edit the group, not computed by default
+     * only used by front-end
+     * 
+     * do **NOT** use as a safety check in back-end.
+     * @see currentUserCanEdit()
+     */
+    userCanEdit: boolean = false;
+
+
+    /**
+     * Check if the current user can edit this game-room
+     */
+    @AfterLoad()
+    @AfterInsert()
+    public async currentUserCanEdit(): Promise<boolean> {
+        const curUser = Container.get(UserRegisterService).currentUser;
+        // User is not logged-in, doesn't have any rights.
+        if (!curUser || !curUser.id) {
+            this.userCanEdit = false;
+            return this.userCanEdit;
+        }
+
+        // Make sure we have fetched the created by.
+        let checkGroup = <SCGameRoomEntity>this;
+        if (!this.createdBy) checkGroup = await Container.get(DbService).repo(SCGameRoomEntity).findOneById(this.id, { relations: ['createdBy'] });
+
+        // Check if we're the creator
+        if (checkGroup.createdBy.id === curUser.id) this.userCanEdit = true;
+
+        return this.userCanEdit;
+    }
 
     /**
      * If the current group is active
