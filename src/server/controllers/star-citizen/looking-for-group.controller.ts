@@ -51,20 +51,6 @@ export class APISCLFGController {
     }
 
     /**
-     * Get a group by its unique hash
-     * @param hash unique hashId 
-     */
-    @Get('/group/:hashId')
-    public async getGroup( @Param("hashId") hash: string) {
-        if (!hash) return APIResponse.err("must supply a group");
-
-        const id = Number(Container.get(DbService).hashIds("gameroom").decode(hash)[0]);
-        const group = await Container.get(DbService).repo(SCGameRoomEntity).findOneById(id, { relations: ['players', 'createdBy'] });
-
-        return APIResponse.send(group);
-    }
-
-    /**
      * List all the available modes / game-modes
      */
     @Get('/available-modes')

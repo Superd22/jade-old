@@ -9,7 +9,7 @@
       <button md-button (click)="goHandle()" *ngIf="currentHandle">
         {{ currentIdent?.rsiHandle ? (currentIdent?.rsiHandle != currentHandle ? "Changer de handle" : "") : (!currentDossier ? "Renseigner mon handle" : "Chercher à nouveau") }}
       </button>
-      <button md-raised-button color="primary" (click)="confirmHandle()" *ngIf="currentDossier">Confirmer ce handle</button>
+      <button md-raised-button color="primary" *ngIf="currentDossier" (click)="confirmHandle()">Confirmer ce handle</button>
     </md-card-title>
   </md-card-header>
   <md-card-actions>

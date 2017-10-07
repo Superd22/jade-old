@@ -47,7 +47,7 @@ export class UserRegisterService {
             // Check our LFG status and build it if necesserary 
             user.lfg = await Container.get(SCCommonService).getLFGOfUser(user);
             // Build group status
-            //user.group = await Container.get(SCCommonService).getGroupOfUser(user);
+            user.group = await Container.get(SCCommonService).getGroupOfUser(user);
 
             return user;
         }

@@ -1,3 +1,4 @@
+import { ScLfService } from './../../../services/sc-lf.service';
 import { JadeApiService } from './../../../../common/services/jade-api.service';
 import { ISCGameRoom } from './../../../../../common/interfaces/star-citizen/group.interface';
 import { SCDefaultGameModes } from './../../../../../common/enums/star-citizen/default-game-modes.enum';
@@ -40,7 +41,7 @@ export class LfmCreateComponent implements OnInit {
   public get isNewGroup(): boolean { return Boolean(this.group.id >= 0); }
 
 
-  constructor(protected api: JadeApiService) { }
+  constructor(protected api: ScLfService) { }
 
   ngOnInit() {
   }
@@ -63,8 +64,10 @@ export class LfmCreateComponent implements OnInit {
    * Send group to back-end
    */
   public submit() {
-    this.api.patch<ISCGameRoom>("sc/lfm/game-room", this.groupSend).subscribe((newGroup) => {
-      console.log(newGroup);
+    this.api.createGroup(this.groupSend).subscribe((data) => {
+      if(!data.error) {
+        
+      }
     });
   }
 

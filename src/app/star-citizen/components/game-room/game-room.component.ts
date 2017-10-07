@@ -24,7 +24,7 @@ export class GameRoomComponent implements OnInit {
   }
 
   public fetchGroup() {
-    this.api.get<ISCGameRoom>("sc/lfg/group/" + this._hash).subscribe((data) => {
+    this.api.get<ISCGameRoom>("game-room/" + this._hash).subscribe((data) => {
       this.group = data.data;
     });
   }

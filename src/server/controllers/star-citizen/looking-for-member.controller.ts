@@ -1,8 +1,10 @@
+import { Container } from 'typedi';
+import { SCGameRoomService } from './../../services/star-citizen/game-room.service';
+import { QueryParam } from 'routing-controllers';
 import { ISCGameMode } from './../../../common/interfaces/star-citizen/game-mode.interface';
 import { ISCGameRoom } from './../../../common/interfaces/star-citizen/group.interface';
 import { DeepPartial } from 'typeorm/common/DeepPartial';
 import { SCGameRoomEntity } from './../../entity/star-citizen/game-room.entity';
-import { Container } from 'typedi';
 import { UserRegisterService } from './../../services/user-register.service';
 import { ISCLFSearchParams } from './../../../common/interfaces/star-citizen/lf-search-params.interface';
 import { SCDefaultGameModes } from './../../../common/enums/star-citizen/default-game-modes.enum';
@@ -30,7 +32,7 @@ export class APISCLFGController {
     @Post('/list')
     public async listMembers( @CurrentUser() user: JadeUserEntity, @Body() body: ISCLFSearchParams) {
 
-        let where = { };
+        let where = {};
 
 
         const limit = body.limit;
@@ -68,17 +70,8 @@ export class APISCLFGController {
         if (user.group && user.group.isActive) return APIResponse.err("you already have an active group");
         if (!this.sc.userCanEditRoom(user, room)) return APIResponse.err("you don't have the rights to edit this.");
 
-        let gameRoom = new SCGameRoomEntity();
-        gameRoom = Object.assign(gameRoom, room);
 
-        if (!gameRoom.id) gameRoom.createdBy = user;
-
-        await this.db.repo(SCGameRoomEntity).persist(gameRoom);
-
-        user.setGroup(gameRoom);
-
-        await this.db.repo(JadeUserEntity).persist(user);
-        return APIResponse.send(gameRoom);
+        return APIResponse.send(await Container.get(SCGameRoomService).createGameRoom(user, room));
     }
 
     /**
@@ -90,18 +83,6 @@ export class APISCLFGController {
     public async deleteGameRoom( @CurrentUser() user: JadeUserEntity, @Body() room: ISCGameRoom) {
         if (!this.sc.userCanEditRoom(user, room)) return APIResponse.err("you don't have the rights to edit this.");
 
-        // Get the room
-        const dbRoom = await this.db.repo(SCGameRoomEntity).findOneById(room.id, { relations: ["players"] });
-
-        // Remove every player
-        dbRoom.players.map((player) => {
-            player.setGroup(null);
-        });
-
-        // And remove the room
-        await this.db.repo(SCGameRoomEntity).remove(dbRoom);
-
-        return APIResponse.send(true);
+        return APIResponse.send(await Container.get(SCGameRoomService).deleteGameRoom(room));
     }
-
 }

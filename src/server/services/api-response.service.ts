@@ -24,13 +24,24 @@ export class APIResponse {
      * Offuscate ids that need to be.
      * @param data 
      */
-    public static checkIds(data: any) {
-        if (data['id'] && data['hashId']) data['id'] = null;
+    public static checkIds(data: any, stack = 0) {
+        if (!data) return;
+        // dirty circular fix
+        data = JSON.parse(JSON.stringify(data));
+        if (data['_hashModuleName']) delete (data['_hashModuleName']);
+        if (data['id'] && data['hashId']) delete (data['id']);
 
         // If we're iterable, check children
-        if (typeof data === typeof [] || typeof data === typeof {}) {
-            for (let subData of data) {
-                subData = APIResponse.checkIds(subData);
+        if (data && (typeof data === typeof [] || typeof data === typeof {})) {
+            for (let subData in data) {
+                try {
+                    if (typeof data[subData] === typeof {})
+                        data[subData] = APIResponse.checkIds(data[subData], (stack++));
+                } catch (error) {
+                    // Expected, on getters.
+                    if (error instanceof TypeError) continue;
+                    throw error;
+                }
             }
         }
 

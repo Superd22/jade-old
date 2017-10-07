@@ -4,7 +4,7 @@ import { IJadeUserAuth } from './jade-user-auth.interface';
 import { IJadeUserLFG } from './jade-user-lfg.interface';
 export interface IJadeUser {
     /** internal db id */
-    id: number;
+    hashId: string;
     /** rsi unique handle identifier */
     rsiHandle: string;
     /** scfr forum unique id */
@@ -16,6 +16,8 @@ export interface IJadeUser {
     /** auth thingy */
     auth?: IJadeUserAuth;
     _handleCode?: IJadeUserHandleCode;
+
+    id?: number;
     lfg?: IJadeUserLFG;
     group?: ISCGameRoom;
 }

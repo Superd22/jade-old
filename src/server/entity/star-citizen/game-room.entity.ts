@@ -7,7 +7,7 @@ import { SCGameModeEntity } from './game-mode.entity';
 import { ISCGameMode } from './../../../common/interfaces/star-citizen/game-mode.interface';
 import { ISCGameRoom, ISCGroupStatus } from './../../../common/interfaces/star-citizen/group.interface';
 import { JadeUserEntity } from './../user/jade-user.entity';
-import { Entity, PrimaryGeneratedColumn, Column, Index, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, AfterLoad, AfterInsert } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, Index, OneToOne, ManyToOne, OneToMany, ManyToMany, JoinTable, AfterLoad, AfterInsert, JoinColumn } from "typeorm";
 import { ISCDefaultGameMode } from "./../../../common/enums/game-mode.enum";
 import { HashIdEntity } from '../hash-id.entity';
 
@@ -40,12 +40,12 @@ export class SCGameRoomEntity<gameModeId=number> extends HashIdEntity implements
     @Column("datetime")
     createdAt = new Date();
 
-    @ManyToMany(type => JadeUserEntity)
-    @JoinTable()
+    @OneToOne(type => JadeUserEntity)
+    @JoinColumn()
     createdBy: JadeUserEntity;
 
     @Column("integer")
-    maxPlayers: number;
+    maxPlayers: number = 2;
 
 
     /**

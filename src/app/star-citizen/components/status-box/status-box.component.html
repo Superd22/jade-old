@@ -2,6 +2,43 @@
   <md-card-header>
     <md-card-title> STATUT </md-card-title>
   </md-card-header>
+
+
+  <md-expansion-panel>
+    <md-expansion-panel-header>
+      <md-panel-title>
+        LFG
+      </md-panel-title>
+      <md-panel-description>
+        Actuellement {{ lfg ? "en recherche de groupe" : "inactif" }}
+      </md-panel-description>
+    </md-expansion-panel-header>
+
+    <md-action-row>
+      <button color="primary" md-button routerLink="/LFG/criteres">{{lfg ? "Changer de critères" : "Lancer une recherche"}}</button>
+      <button md-button (click)="lf.removeLfg()" *ngIf="lfg">Arrêter la recherche</button>
+    </md-action-row>
+
+  </md-expansion-panel>
+
+  <md-expansion-panel>
+    <md-expansion-panel-header>
+      <md-panel-title>
+        LFM
+      </md-panel-title>
+      <md-panel-description>
+        Actuellement {{ lfm ? "en recherche de membres" : "inactif" }}
+      </md-panel-description>
+    </md-expansion-panel-header>
+
+    <md-action-row>
+      <button color="primary" md-button routerLink="/LFM/criteres">{{lfm ? "Voir mon groupe" : "Créer un groupe"}}</button>
+      <button md-button (click)="lf.leaveGroup()" *ngIf="lfm">Quitter le groupe</button>
+
+    </md-action-row>
+
+  </md-expansion-panel>
+
   <md-card-actions>
 
   </md-card-actions>
