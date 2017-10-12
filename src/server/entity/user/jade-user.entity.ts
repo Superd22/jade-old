@@ -71,13 +71,18 @@ export class JadeUserEntity extends HashIdEntity implements IJadeUser {
             this._handleCode = null;
         }
         // We're adding a non-trusted handle, we're gonna gen an auth code to trust this in the future
-        else {
-            // IF we have a code, discard it.
-            this.removeCodeForHandle();
+        else this.genNewHandleCode();
+    }
 
-            // and create our new code
-            this._handleCode = new JadeUserHandleCodeEntity();
-        }
+    /**
+     * Generate a new handle code for this user to verify his handle
+     * this does **not** persist anything.
+     */
+    public genNewHandleCode() {
+        // IF we have a code, discard it.
+        this.removeCodeForHandle();
+        // and create our new code
+        this._handleCode = new JadeUserHandleCodeEntity();
     }
 
     /**

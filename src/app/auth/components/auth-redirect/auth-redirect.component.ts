@@ -1,8 +1,9 @@
+import { JadeApiService } from './../../../common/services/jade-api.service';
 import { OauthSCFRService } from './../../services/oauth-scfr.service';
 import { OauthDiscordService } from './../../services/oauth-discord.service';
 import { Component, OnInit } from '@angular/core';
 import { Location } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { oAuthProviders } from '../../../../common/enums/oauth-providers.enum';
 import { OauthService } from '../../services/oauth.service';
 
@@ -22,7 +23,8 @@ export class AuthRedirectComponent implements OnInit {
 
   public busy: boolean = false;
 
-  constructor(protected route: ActivatedRoute, protected discord: OauthDiscordService, protected scfr: OauthSCFRService, protected location: Location) {
+  constructor(protected route: ActivatedRoute, protected discord: OauthDiscordService, protected scfr: OauthSCFRService, protected location: Location,
+    protected api: JadeApiService, protected router: Router) {
 
   }
 
@@ -47,17 +49,24 @@ export class AuthRedirectComponent implements OnInit {
       this.getProviderService().get_token_from_code(this._code).subscribe((data) => {
         this.busy = false;
         if (data.error) this.error = data.msg;
+        else {
+          this.api.fetchIdentify();
+          setTimeout(this.router.navigateByUrl("/"), 5000)
+        }
       });
+    }
+    else {
+      this.router.navigateByUrl("/");
     }
   }
 
   public get providerLogo() {
     let logo = "";
-    if(this.provider == "scfr") logo = "SCFR-logo.png";
+    if (this.provider == "scfr") logo = "SCFR-logo.png";
     else logo = "Discord-Logo.svg";
 
 
-    return "assets/images/"+logo;
+    return "assets/images/" + logo;
   }
 
 

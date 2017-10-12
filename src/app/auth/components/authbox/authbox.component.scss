@@ -6,3 +6,23 @@
         margin: 16px;
     }
 }
+
+.handle-hint {
+    font-size: 11px;
+    line-height: 11px;
+    margin-top: -16px;
+    color: grey;
+    position: relative;
+    z-index: 1;
+
+    .handle-code {
+        display: inline-block;
+        background: grey;
+        padding: 3px;
+        color: white;
+        vertical-align: middle;
+        border: 1px solid rgba(189, 189, 189, 0.28);
+        line-height: 10px;
+    }
+
+}

@@ -1,18 +1,18 @@
-<md-horizontal-stepper>
-  <md-step>
-    <ng-template mdStepLabel><a routerLink="criteres">Mon groupe</a></ng-template>
-  </md-step>
-  <md-step>
-    <ng-template mdStepLabel><a routerLink="contact">Informations de contact</a></ng-template>
-  </md-step>
-  <md-step>
-    <ng-template mdStepLabel><a routerLink="members">Joueurs cherchant un groupe</a></ng-template>
-  </md-step>
-</md-horizontal-stepper>
+<mat-horizontal-stepper>
+  <mat-step>
+    <ng-template matStepLabel><a routerLink="criteres">Mon groupe</a></ng-template>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel><a routerLink="contact">Informations de contact</a></ng-template>
+  </mat-step>
+  <mat-step>
+    <ng-template matStepLabel><a routerLink="members">Joueurs cherchant un groupe</a></ng-template>
+  </mat-step>
+</mat-horizontal-stepper>
 
 <router-outlet></router-outlet>
 
-<!--<a md-tab-link
+<!--<a mat-tab-link
 *ngFor="let link of navLinks"
 [routerLink]="link"
 routerLinkActive #rla="routerLinkActive"

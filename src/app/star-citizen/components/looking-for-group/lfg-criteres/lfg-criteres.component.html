@@ -1,5 +1,5 @@
 <div class="mode-selector">
-  <button md-button color="accent" (click)="toggleMode(mode)" [ngClass]="{'mat-raised-button': mode.selected}" *ngFor="let mode of displayModes">
+  <button mat-button color="accent" (click)="toggleMode(mode)" [ngClass]="{'mat-raised-button': mode.selected}" *ngFor="let mode of displayModes">
     {{mode.prettyName}}
   </button>
 
@@ -10,13 +10,13 @@
     <h4>Besoin de préciser tes envies ?</h4>
 
     <ng-container *ngFor="let submode of displaySubModes | scSubModeByMode: mode">
-      <md-slide-toggle class="example-margin" [checked]="checked" [(ngModel)]="submode.selected">
+      <mat-slide-toggle class="example-margin" [checked]="checked" [(ngModel)]="submode.selected">
         {{submode.name}}
-      </md-slide-toggle>
+      </mat-slide-toggle>
     </ng-container>
 
 
   </div>
 </div>
 
-<button [disabled]="!selectedModes.length" md-raised-button color="primary" (click)="submit()">Valider !</button>
+<button [disabled]="!selectedModes.length" mat-raised-button color="primary" (click)="submit()">Valider !</button>

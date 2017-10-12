@@ -1,31 +1,36 @@
-<md-card>
-  <md-card-header>
-    <img md-card-avatar [src]="currentImage">
-    <md-card-title>
-      <md-form-field>
-        <input mdInput type="text" placeholder="Handle" [(ngModel)]="currentHandle">
-        <md-hint *ngIf="currentIdent?.rsiHandle"> {{currentIdent.auth?.handle_trusted ? "Handle vérifié" : "Verifier mon handle:"}} </md-hint>
-      </md-form-field>
-      <button md-button (click)="goHandle()" *ngIf="currentHandle">
+<mat-card>
+  <mat-card-header>
+    <img mat-card-avatar [src]="currentImage">
+    <mat-card-title>
+      <mat-form-field>
+        <input matInput type="text" placeholder="Handle" [(ngModel)]="currentHandle">
+
+      </mat-form-field>
+      <div class="handle-hint" *ngIf="currentIdent?.rsiHandle">
+        {{currentIdent.auth?.handle_trusted ? "Handle vérifié" : (currentIdent._handleCode ? "Verifier mon handle:" : "Connecte toi
+        pour verifier ton handle")}}
+        <span class="handle-code" *ngIf="currentIdent._handleCode">{{currentIdent._handleCode?.code}}</span>
+      </div>
+      <button mat-button (click)="goHandle()" *ngIf="currentHandle">
         {{ currentIdent?.rsiHandle ? (currentIdent?.rsiHandle != currentHandle ? "Changer de handle" : "") : (!currentDossier ? "Renseigner mon handle" : "Chercher à nouveau") }}
       </button>
-      <button md-raised-button color="primary" *ngIf="currentDossier" (click)="confirmHandle()">Confirmer ce handle</button>
-    </md-card-title>
-  </md-card-header>
-  <md-card-actions>
-    <button *ngIf="!currentIdent?.discordId; else disconectDiscord" md-button (click)="oauthDiscord.get_authorization()"> <img class="mat-icon material-icons" src="assets/images/Discord-Logo.svg" style="height:32px;"> Se connecter via Discord</button>
+      <button mat-raised-button color="primary" *ngIf="currentDossier" (click)="confirmHandle()">Confirmer ce handle</button>
+    </mat-card-title>
+  </mat-card-header>
+  <mat-card-actions>
+    <button *ngIf="!currentIdent?.discordId; else disconectDiscord" mat-button (click)="oauthDiscord.get_authorization()"> <img class="mat-icon material-icons" src="assets/images/Discord-Logo.svg" style="height:32px;"> Se connecter via Discord</button>
     <ng-template #disconectDiscord>
-      <button md-button disabled> <img class="mat-icon material-icons" src="assets/images/Discord-Logo.svg" style="height:32px;"> Connecté à discord </button>
+      <button mat-button disabled> <img class="mat-icon material-icons" src="assets/images/Discord-Logo.svg" style="height:32px;"> Connecté à discord </button>
     </ng-template>
 
 
-    <button md-button *ngIf="!currentIdent?.scfrId; else disconectSCFR" (click)="oauthSCFR.get_authorization()"> <img class="mat-icon material-icons" src="assets/images/SCFR-logo.notext.dark.png" style="width:32px;"> Se connecter via SC.FR</button>
+    <button mat-button *ngIf="!currentIdent?.scfrId; else disconectSCFR" (click)="oauthSCFR.get_authorization()"> <img class="mat-icon material-icons" src="assets/images/SCFR-logo.notext.dark.png" style="width:32px;"> Se connecter via SC.FR</button>
 
     <ng-template #disconectSCFR>
-      <button md-button disabled> <img class="mat-icon material-icons" src="assets/images/SCFR-logo.notext.dark.png" style="width:32px;">  Connecté à SC.FR </button>
+      <button mat-button disabled> <img class="mat-icon material-icons" src="assets/images/SCFR-logo.notext.dark.png" style="width:32px;">  Connecté à SC.FR </button>
     </ng-template>
-  </md-card-actions>
-</md-card>
+  </mat-card-actions>
+</mat-card>
 
 
 <div *ngIf="currentDossier">

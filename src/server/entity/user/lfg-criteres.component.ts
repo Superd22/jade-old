@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ISCGameMode } from '../../../../../common/enums/game-mode.enum';
 import { SCGameSubMode } from '../../../../../common/enums/game-sub-mode.enum';
-import { MdChipInputEvent } from '@angular/material';
+import { MatChipInputEvent } from '@angular/material';
 
 @Component({
   selector: 'jade-lfg-criteres',

@@ -26,7 +26,6 @@ export class SCGameRoomController {
         return APIResponse.send(group);
     }
 
-
     /**
      * Join a game room as a player
      * @param user 

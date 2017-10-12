@@ -25,7 +25,7 @@ export class UserRegisterService {
     private _currentUser: JadeUserEntity;
     public get currentUser() { return this._currentUser; }
 
-    
+
     public constructor() { }
 
     /**
@@ -35,7 +35,7 @@ export class UserRegisterService {
      */
     public async findUserFromToken(token: string): Promise<IJadeUser> {
         let payload = this.getTokenData(token);
-        
+
         return await this.findUserFromId(payload ? payload.jadeUserId : -1);;
     }
 
@@ -55,7 +55,7 @@ export class UserRegisterService {
             user.lfg = await Container.get(SCCommonService).getLFGOfUser(user);
             // Build group status
             user.group = await Container.get(SCCommonService).getGroupOfUser(user);
-            
+
             this._currentUser = user;
             return user;
         }
@@ -92,8 +92,23 @@ export class UserRegisterService {
     public async setUserProvidersInfo(user: JadeUserEntity, forceUpdate?: boolean) {
         await this.setUserDiscordInfo(user, forceUpdate);
         await this.setUserSCFRInfo(user, forceUpdate);
+        this.verifyUserHandleCode(user, forceUpdate);
     }
 
+    /**
+     * Makes sure a given user has an handle code if needed
+     * @param user the user
+     * @param forceUpdate whether to force the update of the code or not
+     */
+    public verifyUserHandleCode(user: JadeUserEntity, forceUpdate?: boolean) {
+        if (user.rsiHandle && user.isRegistered && (!user._handleCode || forceUpdate)) user.genNewHandleCode();
+    }
+
+    /**
+     * Makes sure a given user has the relevant SC.FR information, and is still authorized there.
+     * @param user 
+     * @param forceUpdate 
+     */
     public async setUserSCFRInfo(user: JadeUserEntity, forceUpdate?: boolean) {
         if (user.auth && user.auth.scfr_token) {
             if (user.scfrId === 0 || forceUpdate) {
@@ -111,6 +126,11 @@ export class UserRegisterService {
         }
     }
 
+    /**
+     * Makes sure a given user has the relevant Discord information and is still authorized there
+     * @param user 
+     * @param forceUpdate 
+     */
     public async setUserDiscordInfo(user: JadeUserEntity, forceUpdate?: boolean) {
         if (user.auth && user.auth.discord_token) {
             if (!user.discordId || forceUpdate) {

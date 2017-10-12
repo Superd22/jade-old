@@ -1,3 +1,5 @@
+import { UiService } from './../../common/services/ui.service';
+import { IJadeUser } from './../../../common/interfaces/User/jadeUser.interface';
 import { ISCGameRoom } from './../../../common/interfaces/star-citizen/group.interface';
 import { IdentifyService } from './../../auth/services/identify.service';
 import { IJadeUserLFG } from './../../../common/interfaces/User/jade-user-lfg.interface';
@@ -22,12 +24,13 @@ export class ScLfService {
   public get lfgParam(): BehaviorSubject<ISCLFParams> { return this._lfgParam; }
 
 
-  constructor(protected api: JadeApiService, protected identify: IdentifyService) {
+  constructor(protected api: JadeApiService, protected identify: IdentifyService, protected ui: UiService) {
 
     // Subscribe to token change for lfg
     this.identify.jadeIdentifySubject.subscribe((token) => {
       if (token && token.jadeUser) {
-        this._lfgParam.next(token.jadeUser.lfg);
+        console.log("nexting", token.jadeUser.lfg);
+        this.lfgParam.next(token.jadeUser.lfg);
         this._group.next(token.jadeUser.group);
       }
     });
@@ -49,10 +52,9 @@ export class ScLfService {
 
     this._lfgParam.next(packet);
 
-    this.api.patch("sc/lfg/lfg-user", packet).subscribe((data) => {
-      console.log(data);
+    return this.api.patch<IJadeUser>("sc/lfg/lfg-user", packet).map((data) => {
+      return data;
     });
-
   }
 
   /**
@@ -60,7 +62,10 @@ export class ScLfService {
    */
   public removeLfg() {
     this.api.delete("sc/lfg/lfg-user").subscribe((data) => {
-      if (!data.error) this._lfgParam.next(null);
+      if (!data.error) {
+        this._lfgParam.next(null);
+        this.ui.openSnackBar("Recherche arrétée");
+      }
     });
   }
 
@@ -113,8 +118,11 @@ export class ScLfService {
     if (!curGroup) return;
 
     this.api.delete("game-room/" + curGroup.hashId + "/player").subscribe((data) => {
-      if (!data.error) this._group.next(null);
-      console.log(data);
+      if (!data.error) {
+        this._group.next(null);
+        this.ui.openSnackBar("Vous avez quitté le groupe");
+      }
+
     });
   }
 
@@ -127,9 +135,12 @@ export class ScLfService {
   public joinGroup(group: ISCGameRoom)
   public joinGroup(g: any) {
     if (typeof g !== typeof "abc") g = g.hashId;
-    this.api.delete("game-room/" + g + "/player").subscribe((data) => {
-      if (!data.error) this._group.next(null);
-      console.log(data);
+    this.api.put<ISCGameRoom>("game-room/" + g + "/player", {}).subscribe((data) => {
+      if (data.error) {}
+      else {
+        this._group.next(data.data)
+        this.ui.openSnackBar("Vous avez rejoins le groupe");
+      }
     });
   }
 

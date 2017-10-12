@@ -1,3 +1,4 @@
+import { UiService } from './../../../../common/services/ui.service';
 import { ScLfService } from './../../../services/sc-lf.service';
 import { SCDefaultGameModes } from './../../../../../common/enums/star-citizen/default-game-modes.enum';
 import { IDisplaySCMode } from './../../../interfaces/sc-game-mode.interface';
@@ -7,7 +8,7 @@ import { ISCGameMode } from './../../../../../common/interfaces/star-citizen/gam
 import { Component, OnInit } from '@angular/core';
 import { ISCDefaultGameMode } from '../../../../../common/enums/game-mode.enum';
 import { SCGameSubMode } from '../../../../../common/enums/game-sub-mode.enum';
-import { MdChipInputEvent } from '@angular/material';
+import { MatChipInputEvent, MatSnackBar } from '@angular/material';
 
 @Component({
   selector: 'jade-lfg-criteres',
@@ -33,9 +34,10 @@ export class LfgCriteresComponent implements OnInit {
   public get selectedSubModes(): IDisplaySCSubMode[] { return this.displaySubModes.filter((submode) => submode.selected); }
 
 
-  constructor(protected scLF: ScLfService) { }
+  constructor(protected scLF: ScLfService, protected ui: UiService) { }
 
   ngOnInit() {
+    this.buildExistingSelection();
   }
 
   /**
@@ -47,7 +49,31 @@ export class LfgCriteresComponent implements OnInit {
   }
 
   public submit() {
-    this.scLF.setLfg(this.selectedModes, this.selectedSubModes);
+    const wasAlreadyLFG = Boolean(this.scLF.lfgParam.value);
+    this.scLF.setLfg(this.selectedModes, this.selectedSubModes).subscribe((data) => {
+      if (data.error) { }
+      else {
+        this.ui.openSnackBar(wasAlreadyLFG ? "Critères mis à jours !" : "Recherche lancée !");
+      }
+    });
+  }
+
+
+  /**
+   * Builds an existing selection from the current value in the service
+   */
+  public buildExistingSelection() {
+    this.scLF.lfgParam.subscribe((current) => {
+
+      this.displayModes.map((gm) => gm.selected = false);
+      this.displaySubModes.map(gsm => gsm.selected = false);
+
+      if (current) {
+        if (current.gameModes) current.gameModes.map((selectedGameMode) => this.displayModes.find((gm) => gm.id === selectedGameMode.id).selected = true);
+        if (current.gameSubModes) current.gameSubModes.map((selectedGameSubMode) => this.displaySubModes.find((gsm) => gsm.id === selectedGameSubMode.id).selected = true);
+      }
+
+    });
   }
 
 }

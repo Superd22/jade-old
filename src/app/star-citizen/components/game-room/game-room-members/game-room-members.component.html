@@ -1,0 +1,12 @@
+<div class="list">
+  <mat-list>
+    <mat-list-item *ngFor="let player of players">
+      <img matListAvatar>
+      <h3 matLine> {{message.from}} </h3>
+      <p matLine>
+        <span> {{message.subject}} </span>
+        <span class="demo-2"> -- {{message.content}} </span>
+      </p>
+    </mat-list-item>
+  </mat-list>
+</div>

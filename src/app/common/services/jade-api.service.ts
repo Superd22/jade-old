@@ -8,7 +8,7 @@ import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { HttpHeaders } from '@angular/common/http';
 import { HttpParams } from '@angular/common/http';
-import { MdSnackBar } from '@angular/material';
+import { MatSnackBar } from '@angular/material';
 
 /**
  * Main helper service to access the jade REST api
@@ -24,7 +24,7 @@ export class JadeApiService {
 
   public get identity(): IJadeToken { return this.identify.jadeIdentifySubject.getValue(); }
 
-  constructor(protected http: HttpClient, protected identify: IdentifyService, protected snackBar: MdSnackBar) {
+  constructor(protected http: HttpClient, protected identify: IdentifyService, protected snackBar: MatSnackBar) {
   }
 
   public get<T>(endpoint: string): Observable<IJadeAPIResponse<T>> {
@@ -38,6 +38,16 @@ export class JadeApiService {
   }
 
   public post<T>(endpoint: string, body: any): Observable<IJadeAPIResponse<T>> {
+    return this.http.post(
+      this.getEndpoint(endpoint), body, this.commonParams()
+    ).map(
+      (response: HttpResponse<IJadeAPIResponse<T>>) => {
+        this.responseHandle(response);
+        return response.body;
+      });
+  }
+
+  public put<T>(endpoint: string, body: any): Observable<IJadeAPIResponse<T>> {
     return this.http.post(
       this.getEndpoint(endpoint), body, this.commonParams()
     ).map(
@@ -97,5 +107,9 @@ export class JadeApiService {
 
   private getEndpoint(endpoint: string): string {
     return this._api + endpoint;
+  }
+
+  public fetchIdentify() {
+    this.get("identify/").subscribe();
   }
 }

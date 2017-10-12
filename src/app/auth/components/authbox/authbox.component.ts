@@ -6,7 +6,7 @@ import { RsiApiService, IRSIDossierSummary } from './../../../common/services/rs
 import { JadeApiService } from './../../../common/services/jade-api.service';
 import { IdentifyService } from './../../services/identify.service';
 import { Component, OnInit } from '@angular/core';
-import { MdIconRegistry } from '@angular/material';
+import { MatIconRegistry } from '@angular/material';
 
 @Component({
   selector: 'jade-authbox',
@@ -43,7 +43,7 @@ export class AuthboxComponent implements OnInit {
 
   ngOnInit() {
     // Check our identity
-    this.api.get("identify/").subscribe();
+    this.api.fetchIdentify();
   }
 
   /**
@@ -65,4 +65,5 @@ export class AuthboxComponent implements OnInit {
       console.log(data);
     });
   }
+
 }
