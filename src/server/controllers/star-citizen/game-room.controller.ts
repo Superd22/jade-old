@@ -39,9 +39,15 @@ export class SCGameRoomController {
         if (group.players.length >= group.maxPlayers) return APIResponse.err("group is full");
 
         group.players.push(user);
+        user.setGroup(group);
 
         await this._db.repo(SCGameRoomEntity).persist(group);
-        return group;
+        await this._db.repo(JadeUserEntity).persist(user);
+
+        // prevent circular
+        user.group = null;
+
+        return APIResponse.send(group);
     }
 
     /**

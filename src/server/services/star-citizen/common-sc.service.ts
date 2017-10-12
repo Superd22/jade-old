@@ -82,7 +82,9 @@ export class SCCommonService {
      * @param user the user to fetch for
      */
     public async getGroupOfUser(user: IJadeUser) {
-        return await Container.get(DbService).repo(SCGameRoomEntity).findOne({ where: { createdBy: user.id }, relations: ['createdBy', 'players', "gameMode", "gameSubModes"] });
+        if (user.group)
+            return await Container.get(DbService).repo(SCGameRoomEntity).findOne({ where: { id: user.group.id }, relations: ['createdBy', 'players', "gameMode", "gameSubModes"] });
+        else return null;
     }
 
     /**

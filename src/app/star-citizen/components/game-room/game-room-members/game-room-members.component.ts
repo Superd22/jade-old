@@ -1,3 +1,4 @@
+import { ScLfService } from './../../../services/sc-lf.service';
 import { IJadeUser } from './../../../../../common/interfaces/User/jadeUser.interface';
 import { ISCGameRoom } from './../../../../../common/interfaces/star-citizen/group.interface';
 import { Component, OnInit, Input } from '@angular/core';
@@ -14,9 +15,19 @@ export class GameRoomMembersComponent implements OnInit {
 
   public get players(): IJadeUser[] { return this.group.players; }
 
-  constructor() { }
+  constructor(protected scLF: ScLfService) { }
 
   ngOnInit() {
+  }
+
+
+  public joinGroup() {
+    this.scLF.joinGroup(this.group.hashId);
+  }
+
+  public leaveGroup() {
+    console.log("prout");
+    this.scLF.leaveGroup();
   }
 
 }

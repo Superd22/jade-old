@@ -1,12 +1,12 @@
 <div class="list">
+  {{players | json}}
   <mat-list>
     <mat-list-item *ngFor="let player of players">
-      <img matListAvatar>
-      <h3 matLine> {{message.from}} </h3>
-      <p matLine>
-        <span> {{message.subject}} </span>
-        <span class="demo-2"> -- {{message.content}} </span>
-      </p>
+      <img matListAvatar [src]="player.rsiAvatar">
+      <h3 matLine> {{player.rsiHandle}} </h3>
     </mat-list-item>
   </mat-list>
+
+  <button mat-button (click)="joinGroup()">Rejoindre ce groupe</button>
+  <button mat-button (click)="leaveGroup()">Quitter ce groupe</button>
 </div>
