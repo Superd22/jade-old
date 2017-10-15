@@ -47,6 +47,8 @@ export class SCGameRoomController {
         await this._db.repo(SCGameRoomEntity).persist(group);
         await this._db.repo(JadeUserEntity).persist(user);
 
+        this._wsGC.broadcastToRoom(hashId, "game-room-update-members");
+
         // prevent circular
         user.group = null;
 
@@ -69,6 +71,7 @@ export class SCGameRoomController {
 
         group.players.splice(id, 1);
         await this._db.repo(SCGameRoomEntity).persist(group);
+        this._wsGC.broadcastToRoom(hashId, "game-room-update-members"); 
         this._wsGC.leaveRoom(user, hashId);
 
         // If we have no user, archive the group

@@ -11,6 +11,18 @@ export class WSGameRoomService {
     protected _ws = Container.get(WebSocketService).ws;
 
     /**
+     * Defines the callbacks 
+     * @todo move in controller ?
+     * @param socket 
+     */
+    public callbacks(socket: SocketIO.Socket) {
+        socket.on("game-room/view", (roomHash: string) => {
+            console.log("[WS] Socket %s requested view on %s", socket.id, roomHash);
+            this.joinRoom(socket, roomHash);
+        });
+    }
+
+    /**
      * Broadcast to the given room
      * @param roomHash 
      * @param data 

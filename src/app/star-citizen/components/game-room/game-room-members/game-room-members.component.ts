@@ -1,3 +1,5 @@
+import { WSGameRoom } from './../../../../../common/consts/ws/ws-game-room.const';
+import { JadeWsService } from './../../../../common/services/jade-ws.service';
 import { ScLfService } from './../../../services/sc-lf.service';
 import { IJadeUser } from './../../../../../common/interfaces/User/jadeUser.interface';
 import { ISCGameRoom } from './../../../../../common/interfaces/star-citizen/group.interface';
@@ -15,7 +17,7 @@ export class GameRoomMembersComponent implements OnInit {
 
   public get players(): IJadeUser[] { return this.group.players; }
 
-  constructor(protected scLF: ScLfService) { }
+  constructor(protected scLF: ScLfService, protected ws: JadeWsService) { }
 
   ngOnInit() {
   }
@@ -26,8 +28,8 @@ export class GameRoomMembersComponent implements OnInit {
   }
 
   public leaveGroup() {
-    console.log("prout");
-    this.scLF.leaveGroup();
+    // We still wanna matain visibility on this page no matter what happens next.
+    this.scLF.leaveGroup().add(() => this.ws.emit("game-room/view", WSGameRoom + this.group.hashId));
   }
 
 }

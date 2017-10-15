@@ -1,3 +1,4 @@
+import { WSGameRoomService } from './ws/websocket-gameroom.service';
 import { Container } from 'typedi';
 import { Service, Inject } from 'typedi';
 import { ExpressService } from './express.service';
@@ -29,6 +30,7 @@ export class WebSocketService {
         this._server.on('connect', (socket) => {
             this.callbacks(socket);
         });
+
     }
 
     private callbacks(socket: SocketIO.Socket) {
@@ -39,5 +41,8 @@ export class WebSocketService {
         socket.on("disconnect", () => {
             Container.get(WSUserService).disconectSocket(socket);
         });
+
+        Container.get(WSGameRoomService).callbacks(socket);
+        
     }
 }

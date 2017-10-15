@@ -1,3 +1,4 @@
+import { WSGameRoom } from './../../../../common/consts/ws/ws-game-room.const';
 import { JadeWsService } from './../../../common/services/jade-ws.service';
 import { ActivatedRoute } from '@angular/router';
 import { ISCGameRoom } from './../../../../common/interfaces/star-citizen/group.interface';
@@ -20,6 +21,11 @@ export class GameRoomComponent implements OnInit {
       .filter((gc) => gc.hashId === this.group.hashId)
       .subscribe((room) => this.group = room);
 
+    this.ws.on("game-room-update-members").subscribe(() => {
+      console.log("got an update!");
+      this.fetchGroup()
+    });
+
   }
 
   ngOnInit() {
@@ -30,6 +36,8 @@ export class GameRoomComponent implements OnInit {
   }
 
   public fetchGroup() {
+    this.ws.emit("game-room/view", WSGameRoom + this._hash);
+
     this.api.get<ISCGameRoom>("game-room/" + this._hash).subscribe((data) => {
       this.group = data.data;
     });

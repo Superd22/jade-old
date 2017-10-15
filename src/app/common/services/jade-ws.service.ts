@@ -18,6 +18,10 @@ export class JadeWsService {
     });
   }
 
+  /**
+   * On event from server
+   * @param event the event to look for
+   */
   public on<T=any>(event: string): Observable<T> {
     return new Observable(observer => {
 
@@ -31,4 +35,10 @@ export class JadeWsService {
 
     });
   }
+
+  
+  public emit(event:string, data: any) {
+    this._io.emit(event, data);
+  }
+
 }

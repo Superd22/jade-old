@@ -117,7 +117,7 @@ export class ScLfService {
     const curGroup = this._group.getValue();
     if (!curGroup) return;
 
-    this.api.delete("game-room/" + curGroup.hashId + "/player").subscribe((data) => {
+    return this.api.delete("game-room/" + curGroup.hashId + "/player").subscribe((data) => {
       if (!data.error) {
         this._group.next(null);
         this.ui.openSnackBar("Vous avez quitté le groupe");
