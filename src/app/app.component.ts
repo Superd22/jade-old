@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { JadeWsService } from './common/services/jade-ws.service';
 
 @Component({
   selector: 'jade-root',
@@ -7,4 +8,8 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'app';
+
+  constructor(protected ws:JadeWsService) {
+
+  }
 }

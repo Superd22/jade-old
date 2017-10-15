@@ -1,6 +1,7 @@
+import { Container } from 'typedi';
 import { Service, Inject } from 'typedi';
 import { ExpressService } from './express.service';
-import * as io from 'socket.io';
+import * as socketIo from 'socket.io';
 
 
 /**
@@ -11,6 +12,14 @@ export class WebSocketService {
     protected _server: SocketIO.Server;
 
     public constructor() {
-        this._server = io();
+        // This is gonna randomly break one day when the express service gets bootstrapped after this one.
+        this._server = socketIo(Container.get(ExpressService).app);
+        this.listen();
+    }
+
+    private listen() {
+        this._server.on('connect', (socket) => {
+            console.log(socket);
+        });
     }
 }
