@@ -1,3 +1,4 @@
+import { WSGameRoomService } from './../../services/ws/websocket-gameroom.service';
 import { SCGameRoomService } from './../../services/star-citizen/game-room.service';
 import { APISCLFGController } from './looking-for-member.controller';
 import { SCGameRoomEntity } from './../../entity/star-citizen/game-room.entity';
@@ -12,6 +13,7 @@ export class SCGameRoomController {
 
     private _hash = Container.get(DbService).hashIds("gameroom");
     private _db = Container.get(DbService);
+    private _wsGC = Container.get(WSGameRoomService);
 
     /**
      * Get a group by its unique hash
@@ -40,6 +42,7 @@ export class SCGameRoomController {
 
         group.players.push(user);
         user.setGroup(group);
+        this._wsGC.joinRoom(user, hashId);
 
         await this._db.repo(SCGameRoomEntity).persist(group);
         await this._db.repo(JadeUserEntity).persist(user);
@@ -66,6 +69,7 @@ export class SCGameRoomController {
 
         group.players.splice(id, 1);
         await this._db.repo(SCGameRoomEntity).persist(group);
+        this._wsGC.leaveRoom(user, hashId);
 
         // If we have no user, archive the group
         if (group.players.length === 0) {

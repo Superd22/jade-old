@@ -5,10 +5,13 @@ import { DbService } from './../db.service';
 import { SCGameRoomEntity } from './../../entity/star-citizen/game-room.entity';
 import { Service } from 'typedi';
 import { ISCGameRoom } from "../../../common/interfaces/star-citizen/group.interface";
+import { WSGameRoomService } from '../ws/websocket-gameroom.service';
 
 
 @Service()
 export class SCGameRoomService {
+
+    private _wsGC = Container.get(WSGameRoomService);
 
     /**
      * Removes a group from the db
@@ -37,11 +40,12 @@ export class SCGameRoomService {
     public async createGameRoom(createdBy: IJadeUser, room: ISCGameRoom) {
         // Create the room
         let gameRoom: SCGameRoomEntity = await Container.get(DbService).buildNewOrGetExistingByHash(room, SCGameRoomEntity, "gameroom");
+        let updating = Boolean(gameRoom.id);
 
         // Fetch user
         let user = await Container.get(DbService).repo(JadeUserEntity).findOneById(createdBy.id)
 
-        if (!gameRoom.id) {
+        if (!updating) {
             // If we're creating the room, set the creator
             gameRoom.createdBy = user;
             // The creator gets put in the room
@@ -53,6 +57,11 @@ export class SCGameRoomService {
 
         // prevent circular
         gameRoom.createdBy = <any>createdBy;
+
+        if(updating) {
+            this._wsGC.broadcastToRoom(gameRoom.hashId, "game-room-update", gameRoom);
+        }
+
         return gameRoom;
     }
 
