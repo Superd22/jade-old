@@ -11,10 +11,29 @@ import { ReplaySubject } from "rxjs";
 import * as jwt from "jsonwebtoken";
 
 export class APIResponse {
+
+    /**
+     * Builds a ws packet
+     * @param data the data to send
+     */
+    public static ws<T>(data: T): T {
+        return APIResponse.checkIds(data);
+    }
+
+    /**
+     * Builds an api response
+     * @param data the data to send
+     * @param msg the optional msg status
+     */
     public static send(data: any, msg = "OK"): IJadeAPIResponseSuccess {
         return { data: APIResponse.checkIds(data), msg: msg, error: false };
     }
 
+    /**
+     * Builds an api error packet
+     * @param msg the error message
+     * @param data optional data parameters
+     */
     public static err(msg: string, data?: any): IJadeAPIResponseError {
         return { data: APIResponse.checkIds(data), msg: msg, error: true };
     }

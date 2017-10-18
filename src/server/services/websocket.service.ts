@@ -14,6 +14,7 @@ export class WebSocketService {
     protected _server: SocketIO.Server;
     public get ws(): SocketIO.Server { return this._server; }
     protected _bots: SocketIO.Namespace;
+    public get botsWS() { return this._bots; }
     protected _users: SocketIO.Namespace;
 
     public constructor() {
@@ -43,6 +44,6 @@ export class WebSocketService {
         });
 
         Container.get(WSGameRoomService).callbacks(socket);
-        
+
     }
 }

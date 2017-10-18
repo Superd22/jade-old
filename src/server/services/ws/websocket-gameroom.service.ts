@@ -1,3 +1,4 @@
+import { APIResponse } from './../api-response.service';
 import { WebSocketService } from './../websocket.service';
 import { WSUserService } from './websocket-user.service';
 import { IJadeUser } from './../../../common/interfaces/User/jadeUser.interface';
@@ -30,7 +31,7 @@ export class WSGameRoomService {
     public broadcastToRoom(roomHash: string, event: string, data?: any) {
         const wsRoom = WSGameRoom + roomHash;
         console.log("[WS] Emitting %s to %s", event, wsRoom);
-        this._ws.in(wsRoom).emit(event, data);
+        this._ws.in(wsRoom).emit(event, APIResponse.ws(data));
     }
 
     /**
