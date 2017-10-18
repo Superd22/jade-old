@@ -1,3 +1,5 @@
+import { WSEventUserLFG } from './../../../common/interfaces/ws/events/lf/user-lfg.event';
+import { WSEventUserNoLFG } from './../../../common/interfaces/ws/events/lf/user-nolfg.event';
 import { APIResponse } from './../api-response.service';
 import { WebSocketService } from './../websocket.service';
 import { Container } from 'typedi';
@@ -18,7 +20,7 @@ export class WSLFService {
      * @param lfg criterias
      */
     public brodcastUserLFGStatus(user: IJadeUser, lfg: ISCLFGParams) {
-        this._ws.emit("user/lfg", APIResponse.ws(lfg));
+        new WSEventUserLFG({ userHash: user.hashId, lfg: lfg }).emit();
     }
 
     /**
@@ -26,7 +28,7 @@ export class WSLFService {
      * @param user 
      */
     public brodcastUserNoMoreLFG(user: IJadeUser) {
-        this._ws.emit("user/nolfg");
+        new WSEventUserNoLFG().emit();
     }
 
 
