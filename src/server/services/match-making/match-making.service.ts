@@ -10,11 +10,7 @@ export class MatchMakingService {
     private _ws = Container.get(WebSocketService);
 
     constructor() {
-        let event = new WSEventUserLFG();
 
-        event.on((data) => {
-            
-        });
     }
 
 

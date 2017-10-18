@@ -28,7 +28,7 @@ export class WSLFService {
      * @param user 
      */
     public brodcastUserNoMoreLFG(user: IJadeUser) {
-        new WSEventUserNoLFG().emit();
+        new WSEventUserNoLFG({ userHash: user.hashId }).emit();
     }
 
 

@@ -1,3 +1,4 @@
+import { MatchMakingService } from './services/match-making/match-making.service';
 import { ExpressService } from './services/express.service';
 import { WebSocketService } from './services/websocket.service';
 import { UserRegisterService } from './services/user-register.service';
@@ -19,6 +20,8 @@ export function launchServer() {
     const db = Container.get(DbService);
     const ex = Container.get(ExpressService);
     const ws = Container.get(WebSocketService);
+    const mm = Container.get(MatchMakingService);
+    
 }
 
 

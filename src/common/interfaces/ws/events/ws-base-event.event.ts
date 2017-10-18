@@ -36,11 +36,13 @@ export abstract class IWSBaseEvent<T> {
      * @param callback the callback function
      * @param target where to listen for this event, will default to global namespace
      */
-    public on(callback: (data?: T) => any, target?: IWSEmitter) {
-        const t = target || this._ws.ws;
-        return t.on(this.eventName, callback);
+    public on(callback: (data?: T) => any, target?: IWSReceiver) {
+        const t = target || this._ws.ws.sockets;
+        
+        return (<SocketIO.Namespace>t).on(this.eventName, callback);
     }
 
 }
 
 export type IWSEmitter = SocketIO.Server | SocketIO.Namespace;
+export type IWSReceiver = SocketIO.Namespace | SocketIO.Socket;

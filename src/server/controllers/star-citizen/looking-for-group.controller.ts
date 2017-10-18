@@ -1,3 +1,4 @@
+import { WSLFService } from './../../services/ws/websocket-lf.service';
 import { SCGameRoomEntity } from './../../entity/star-citizen/game-room.entity';
 import { SCDefaultGameModes } from './../../../common/enums/star-citizen/default-game-modes.enum';
 import { ISCLFSearchParams } from './../../../common/interfaces/star-citizen/lf-search-params.interface';
@@ -11,12 +12,15 @@ import { ISCLFGParams } from './../../../common/interfaces/star-citizen/lfg-para
 import { Delete } from 'routing-controllers';
 import { JadeUserEntity } from './../../entity/user/jade-user.entity';
 import { CurrentUser, Patch, Get, JsonController, Body, Post, Param } from 'routing-controllers';
+import { WSEventUserLFG } from './../../../common/interfaces/ws/events/lf/user-lfg.event';
+import { WSEventUserNoLFG } from './../../../common/interfaces/ws/events/lf/user-nolfg.event';
 
 @JsonController("/sc/lfg")
 export class APISCLFGController {
 
     protected sc: SCCommonService = Container.get(SCCommonService);
     protected db: DbService = Container.get(DbService);
+    protected ws: WSLFService = Container.get(WSLFService);
 
     /**
      * List all the currently active groups
@@ -80,6 +84,8 @@ export class APISCLFGController {
         user.lfg = Object.assign(user.lfg, { ...body });
 
         await Container.get(DbService).repo(JadeUserEntity).persist(user);
+        this.ws.brodcastUserLFGStatus(user, body);
+
         return APIResponse.send(user);
     }
 
@@ -91,6 +97,10 @@ export class APISCLFGController {
     @Delete('/lfg-user')
     public async deleteUserLfg( @CurrentUser() user: JadeUserEntity) {
         if (!user.lfg) return APIResponse.send(true);
-        return APIResponse.send(await Container.get(DbService).repo(JadeLFGUserEntity).remove(user.lfg));
+
+        const remove = await Container.get(DbService).repo(JadeLFGUserEntity).remove(user.lfg);
+        this.ws.brodcastUserNoMoreLFG(user);
+
+        return APIResponse.send(remove);
     }
 }

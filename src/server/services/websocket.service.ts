@@ -1,3 +1,4 @@
+import { ReplaySubject, BehaviorSubject } from 'rxjs';
 import { WSGameRoomService } from './ws/websocket-gameroom.service';
 import { Container } from 'typedi';
 import { Service, Inject } from 'typedi';
@@ -16,6 +17,7 @@ export class WebSocketService {
     protected _bots: SocketIO.Namespace;
     public get botsWS() { return this._bots; }
     protected _users: SocketIO.Namespace;
+    public ready = new BehaviorSubject(false);
 
     public constructor() {
         // This is gonna randomly break one day when the express service gets bootstrapped after this one.
@@ -29,6 +31,7 @@ export class WebSocketService {
 
     private listen() {
         this._server.on('connect', (socket) => {
+            if (!this.ready.getValue()) this.ready.next(true);
             this.callbacks(socket);
         });
 
