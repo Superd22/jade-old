@@ -1,3 +1,4 @@
+import { DbService } from './db.service';
 import { JadeUserEntity } from './../entity/user/jade-user.entity';
 import { IJadeUser } from './../../common/interfaces/User/jadeUser.interface';
 import { JadeMysqlConfig } from './../../common/config/mysql.conf';
@@ -30,6 +31,19 @@ export class DiscordService {
         );
     }
 
+    /**
+     * Declares the user as no longer validly authed to this provider
+     * @param user 
+     */
+    public async userNoLongerValid(user: JadeUserEntity) {
+        user = await Container.get(DbService).repo(JadeUserEntity).findOneById(user.id, { relations: ['auth'] });
+
+        user.discordId = null;
+
+        if (user.auth) user.auth.remToken("discord");
+
+        return await Container.get(DbService).repo(JadeUserEntity).persist(user);
+    }
 
     private authorizationToken(user: JadeUserEntity) {
         const token = user.auth ? user.auth.discord_token : "";

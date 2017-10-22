@@ -23,7 +23,7 @@ export class SCGameRoomEntity<gameModeId=number> extends HashIdEntity implements
     title: string;
 
     @Column("text")
-    description: string;
+    description: string = "";
 
     @ManyToOne(type => SCGameModeEntity, gameMode => gameMode.groups)
     gameMode: ISCGameMode;
@@ -79,6 +79,13 @@ export class SCGameRoomEntity<gameModeId=number> extends HashIdEntity implements
         if (checkGroup.createdBy.id === curUser.id) this.userCanEdit = true;
 
         return this.userCanEdit;
+    }
+
+    /** the number of players currently in this group */
+    public async playerCount() {
+        if (!this.players) this.players = (await Container.get(DbService).repo(SCGameRoomEntity).findOneById(this.id, { relations: ['players'] })).players;
+
+        return this.players.length;
     }
 
     /**

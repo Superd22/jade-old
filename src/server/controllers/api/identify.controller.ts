@@ -1,5 +1,5 @@
+import { Service, Container } from 'typedi';
 import { DbService } from './../../services/db.service';
-import { Container } from 'typedi';
 import { xJadeToken } from './../../../common/consts/x-jade-token.const';
 import { JadeUserEntity } from './../../entity/user/jade-user.entity';
 import { APIResponse } from './../../services/api-response.service';
@@ -7,10 +7,11 @@ import { UserRegisterService } from './../../services/user-register.service';
 import { Response } from "express";
 import { JsonController, QueryParam, Body, Get, Post, Put, Delete, Patch, CurrentUser, Res, BodyParam } from "routing-controllers";
 
+@Service()
 @JsonController("/identify")
 export class APIIdentifyController {
-
-    public constructor(protected userService: UserRegisterService) {
+    protected userService: UserRegisterService = Container.get(UserRegisterService);
+    public constructor() {
 
     }
 
@@ -21,7 +22,7 @@ export class APIIdentifyController {
     public async getIdentifyPacket( @CurrentUser({ required: true }) user: JadeUserEntity, @Res() response: Response) {
 
         // Ensure we have all our providers info
-        await this.userService.setUserProvidersInfo(user);
+        await this.userService.setUserProvidersInfo(user, true);
 
         // Current user will either validate or token, or log us as anon.
         const indentity = APIResponse.setTokenUser(response, user);

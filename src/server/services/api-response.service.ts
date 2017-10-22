@@ -25,7 +25,7 @@ export class APIResponse {
      * @param data the data to send
      * @param msg the optional msg status
      */
-    public static send(data: any, msg = "OK"): IJadeAPIResponseSuccess {
+    public static send<T=any>(data: T, msg = "OK"): IJadeAPIResponseSuccess<T> {
         return { data: APIResponse.checkIds(data), msg: msg, error: false };
     }
 
@@ -34,7 +34,7 @@ export class APIResponse {
      * @param msg the error message
      * @param data optional data parameters
      */
-    public static err(msg: string, data?: any): IJadeAPIResponseError {
+    public static err<T>(msg: string, data?: T): IJadeAPIResponseError<T> {
         return { data: APIResponse.checkIds(data), msg: msg, error: true };
     }
 
@@ -84,7 +84,7 @@ export class APIResponse {
      * Encode the JWT token
      * @param token 
      */
-    private static buildToken(token: IJadeToken): string {
+    public static buildToken(token: IJadeToken): string {
         return jwt.sign(token, JWTSecret);
     }
 }

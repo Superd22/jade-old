@@ -12,10 +12,10 @@ export const SCDefaultGameSubModes: ISCGameSubMode[] = [
     { id: 6, gameMode: SCDefaultGameModes[0], name: "Vanduul Swarm", custom: false },
 
     // Star Marine
-    { id: 7, gameMode: SCDefaultGameModes[1], name: "Elimination", custom: false },
-    { id: 8, gameMode: SCDefaultGameModes[1], name: "Last Stand", custom: false },
+    { id: 7, gameMode: SCDefaultGameModes[2], name: "Elimination", custom: false },
+    { id: 8, gameMode: SCDefaultGameModes[2], name: "Last Stand", custom: false },
 
     // Star Citizen
-    { id: 9, gameMode: SCDefaultGameModes[2], name: "Univers Persistant", custom: false },
-    { id: 10, gameMode: SCDefaultGameModes[2], name: "PTU", custom: false },
+    { id: 9, gameMode: SCDefaultGameModes[1], name: "Univers Persistant", custom: false },
+    { id: 10, gameMode: SCDefaultGameModes[1], name: "PTU", custom: false },
 ];

@@ -1,6 +1,10 @@
+import { SCGameRoomMessage } from './../../entity/star-citizen/chat/game-room-message.entity';
+import { SCGameRoomChatService } from './../../services/star-citizen/chat.service';
+import { SCCommonService } from './../../services/star-citizen/common-sc.service';
+import { ISCGameRoomChatMessage } from './../../../common/interfaces/star-citizen/game-room/chat-message.interface';
 import { WSGameRoomService } from './../../services/ws/websocket-gameroom.service';
 import { SCGameRoomService } from './../../services/star-citizen/game-room.service';
-import { APISCLFGController } from './looking-for-member.controller';
+import { APISCLFMController } from './looking-for-member.controller';
 import { SCGameRoomEntity } from './../../entity/star-citizen/game-room.entity';
 import { DbService } from './../../services/db.service';
 import { Container } from 'typedi';
@@ -71,7 +75,7 @@ export class SCGameRoomController {
 
         group.players.splice(id, 1);
         await this._db.repo(SCGameRoomEntity).persist(group);
-        this._wsGC.broadcastToRoom(hashId, "game-room-update-members"); 
+        this._wsGC.broadcastToRoom(hashId, "game-room-update-members");
         this._wsGC.leaveRoom(user, hashId);
 
         // If we have no user, archive the group
@@ -81,6 +85,47 @@ export class SCGameRoomController {
         }
 
         return APIResponse.send(group);
+    }
+
+    /**
+     * Posts a message in a given game room
+     * @param user 
+     * @param hashId 
+     * @param message 
+     */
+    @Put("/:hashId/chat/")
+    public async postChatMessage( @CurrentUser() user: JadeUserEntity, @Param("hashId") hashId: string, @Body() message: ISCGameRoomChatMessage) {
+        if (!hashId) return APIResponse.err("must supply a group");
+        if (!Container.get(SCCommonService).canLf(user)) return APIResponse.err("Need a handle to speak in group");
+
+        message.user = user;
+
+        return APIResponse.send(await Container.get(SCGameRoomChatService).postMessageInGameRoom(await this.getGroupByHash(hashId), message));
+    }
+
+    /**
+     * Lists messages in a given room
+     * @param user 
+     * @param hashId 
+     * @param time 
+     */
+    @Get("/:hashId/chat/")
+    public async viewChatMessages( @CurrentUser() user: JadeUserEntity, @Param("hashId") hashId: string, @QueryParam("time") time: string) {
+        if (!hashId) return APIResponse.err("must supply a group");
+        const group = await this.getGroupByHash(hashId);
+
+        const messages = await Container.get(DbService).repo(SCGameRoomMessage).createQueryBuilder("msg")
+            // Get our poster
+            .leftJoinAndSelect("msg.user", "user")
+            // Take only the messages in our game room
+            .innerJoin("msg.gameRoom", "gameRoom", "gameRoom.id=':roomId'", { roomId: group.id })
+            // take only whose timestamp is above
+            // .where(gameSubModesCondition)
+            // limit
+            .take(20)
+            .getManyAndCount();
+
+        return APIResponse.send(messages);
     }
 
     /**

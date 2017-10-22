@@ -4,7 +4,7 @@ import { APIResponse } from './../../../../server/services/api-response.service'
 /**
  * Base evenement that can be emited on our ws stream
  */
-export abstract class IWSBaseEvent<T> {
+export abstract class IWSBaseEvent<T = any> {
 
     private _ws = Container.get(WebSocketService);
 

@@ -39,9 +39,10 @@ export class SCGameRoomService {
      */
     public async createGameRoom(createdBy: IJadeUser, room: ISCGameRoom) {
         // Create the room
-        let gameRoom: SCGameRoomEntity = await Container.get(DbService).buildNewOrGetExistingByHash(room, SCGameRoomEntity, "gameroom");
+        console.log("wzeow");
+        let gameRoom: SCGameRoomEntity = await Container.get(DbService).buildNewOrGetExistingByHash(room, SCGameRoomEntity, "gameroom", ['players']);
         let updating = Boolean(gameRoom.id);
-
+        console.log("craeate", gameRoom);
         // Fetch user
         let user = await Container.get(DbService).repo(JadeUserEntity).findOneById(createdBy.id)
 

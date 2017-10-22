@@ -4,6 +4,7 @@ import { WSUserService } from './websocket-user.service';
 import { IJadeUser } from './../../../common/interfaces/User/jadeUser.interface';
 import { WSGameRoom } from './../../../common/consts/ws/ws-game-room.const';
 import { Service, Container } from 'typedi';
+import { IWSBaseEvent } from '../../../common/interfaces/ws/events/ws-base-event.event';
 
 @Service()
 export class WSGameRoomService {
@@ -25,13 +26,23 @@ export class WSGameRoomService {
 
     /**
      * Broadcast to the given room
-     * @param roomHash 
-     * @param data 
+     * @param roomHash the hash of the group in which to emit
+     * @param eventName the name of the event to brodcast
+     * @param event the event to broadcast to this room
+     * @param data the data to emit
      */
-    public broadcastToRoom(roomHash: string, event: string, data?: any) {
+    public broadcastToRoom(roomHash: string, event: IWSBaseEvent)
+    public broadcastToRoom(roomHash: string, eventName: string, data?: any)
+    public broadcastToRoom(roomHash: string, e: any, data?: any) {
         const wsRoom = WSGameRoom + roomHash;
-        console.log("[WS] Emitting %s to %s", event, wsRoom);
-        this._ws.in(wsRoom).emit(event, APIResponse.ws(data));
+
+        if (typeof e !== typeof "abc") {
+            data = (<IWSBaseEvent>e).data;
+            e = (<IWSBaseEvent>e).eventName;
+        }
+
+        console.log("[WS] Emitting %s to %s", e, wsRoom);
+        this._ws.in(wsRoom).emit(e, APIResponse.ws(data));
     }
 
     /**
@@ -44,8 +55,11 @@ export class WSGameRoomService {
     public joinRoom(socket: SocketIO.Socket, roomHash: string)
     public joinRoom(socketOrUser: IJadeUser | SocketIO.Socket, roomHash: string) {
         const wsRoom = WSGameRoom + roomHash;
-        if (this.isUser(socketOrUser)) this._WSService.getWsUser(<IJadeUser>socketOrUser).join(wsRoom);
-        else {
+        if (this.isUser(socketOrUser)) {
+            const socketManager = this._WSService.getWsUser(<IJadeUser>socketOrUser);
+            if (socketManager) socketManager.join(wsRoom);
+        }
+        else if (socketOrUser) {
             // This won't hurt
             (<SocketIO.Socket>socketOrUser).join(wsRoom);
         }
@@ -76,7 +90,8 @@ export class WSGameRoomService {
      * @param socketOrUser the socket | user to check
      */
     private isUser(socketOrUser: IJadeUser | SocketIO.Socket): boolean {
-        return (typeof socketOrUser.id === typeof 123);
+        // if join is defined, we're a socket.
+        return Boolean((<SocketIO.Socket>socketOrUser).join);
     }
 
     /**

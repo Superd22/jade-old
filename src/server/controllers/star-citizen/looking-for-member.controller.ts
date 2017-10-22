@@ -1,3 +1,4 @@
+import { Service } from 'typedi';
 import { Container } from 'typedi';
 import { SCGameRoomService } from './../../services/star-citizen/game-room.service';
 import { QueryParam } from 'routing-controllers';
@@ -19,8 +20,9 @@ import { Delete } from 'routing-controllers';
 import { JadeUserEntity } from './../../entity/user/jade-user.entity';
 import { CurrentUser, Patch, Get, JsonController, Body, Post, Put } from 'routing-controllers';
 
+@Service()
 @JsonController("/sc/lfm")
-export class APISCLFGController {
+export class APISCLFMController {
 
     protected sc: SCCommonService = Container.get(SCCommonService);
     protected db: DbService = Container.get(DbService);
@@ -66,12 +68,16 @@ export class APISCLFGController {
      */
     @Patch("/game-room")
     public async createGameRoom( @CurrentUser() user: JadeUserEntity, @Body() room: ISCGameRoom) {
-        if (!this.sc.canLf(user)) return APIResponse.err("must be authed to create a group");
+        console.log("in");
+        if (!this.sc.canLf(user)) return APIResponse.err("You need an handle to create a group...");
         if (user.group && user.group.isActive && !room.hashId) return APIResponse.err("you already have an active group");
         if (!this.sc.userCanEditRoom(user, room)) return APIResponse.err("you don't have the rights to edit this.");
 
 
-        return APIResponse.send(await Container.get(SCGameRoomService).createGameRoom(user, room));
+        console.log("done");
+        const grp = await Container.get(SCGameRoomService).createGameRoom(user, room);
+        console.log("post", grp);
+        return APIResponse.send(grp);
     }
 
     /**

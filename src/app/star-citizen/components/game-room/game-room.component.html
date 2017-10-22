@@ -1,6 +1,7 @@
 <div *ngIf="group">
   <jade-game-room-form [group]="group"></jade-game-room-form>
   <jade-game-room-members [group]="group"></jade-game-room-members>
+  <jade-game-room-chat [group]="group"></jade-game-room-chat>
 </div>
 
 <div *ngIf="!group" class="error">

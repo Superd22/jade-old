@@ -17,17 +17,15 @@ export class DiscordCmdDispatchService {
         // discard bot messages
         if (message.author.bot) return;
 
-        const messageAsLower = message.content.toLocaleLowerCase();
+        const messageAsLower = message.content;
 
         // Discard not a command
         if (messageAsLower.indexOf(botPrefixCommand) !== 0) return;
 
-        console.log("me", message);
-
         // Check if we have a command match
         this._commandMap.forEach((cmd, key) => {
             let re = new RegExp("^" + botPrefixCommand + " " + key);
-            console.log(re);
+            
             let matches = messageAsLower.match(re);
             if (matches) {
                 cmd.callback(message, matches);

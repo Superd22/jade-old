@@ -1,3 +1,4 @@
+import { UserRegisterService } from './../../services/user-register.service';
 import { DiscordService } from './../../services/discord.service';
 import { DbService } from './../../services/db.service';
 import { Container } from 'typedi';
@@ -12,7 +13,7 @@ import { Response } from "express";
 
 
 @JsonController("/oauth")
-export class APIIdentifyController {
+export class APIOauthController {
 
     /**
      * Get a code from a provider, fetch a token and stores it in the db
@@ -49,6 +50,8 @@ export class APIIdentifyController {
             user.setAuthToken(provider, token['access_token'], token['refresh_token']);
             // And save
             await Container.get(DbService).repo(JadeUserEntity).persist(user);
+            // And get wtv data we need
+            Container.get(UserRegisterService).setUserProvidersInfo(user);
         }
     }
     

@@ -1,3 +1,4 @@
+import { DUserResHelper } from './../helper/UserResponse.helper';
 import { IDiscordCommand } from './../interfaces/discord-command.interface';
 import * as Discord from 'discord.js';
 
@@ -9,9 +10,7 @@ export class DiscordCmdIsUp implements IDiscordCommand {
 
     public callback(message?: Discord.Message, match?: string[]) {
         message.channel.send(
-            new Discord.RichEmbed().setTitle("Est-ce que je suis là ?")
-            .setDescription("Evidemment que je suis là.")
-            .setColor("#00AE86")
+            DUserResHelper.info("Est-ce que je suis là ?", "Evidemment que je suis là!")
         );
     }
 }

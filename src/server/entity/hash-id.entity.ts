@@ -18,4 +18,14 @@ export abstract class HashIdEntity {
     protected genHash() {
         this.hashId = Container.get(DbService).hashIds(this._hashModuleName).encode(this.id);
     }
+
+    /**
+     * Returns the id computed from the hash
+     */
+    public getIdFromHash() {
+        if (!this.id && this.hashId)
+            this.id = Container.get(DbService).hashIds(this._hashModuleName).decode(this.hashId)[0];
+
+        return this.id;
+    }
 }

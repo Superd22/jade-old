@@ -18,16 +18,16 @@ export class JadeUserEntity extends HashIdEntity implements IJadeUser {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column("int")
-    @Index()
-    scfrId: number = 0;
+    @Column("int", {nullable: true})
+    @Index({ unique: true })
+    scfrId: number = null;
 
     @Index({ unique: true })
     @Column("varchar")
     rsiHandle: string = "";
 
     @Column("varchar")
-    @Index()
+    @Index({ unique: true })
     discordId: string = "";
 
     @Column("varchar")
@@ -60,7 +60,6 @@ export class JadeUserEntity extends HashIdEntity implements IJadeUser {
      */
     public async setHandle(newHandle: string, trusted?: boolean) {
         this.rsiHandle = newHandle;
-        this.auth.handle_trusted = true;
 
         if (!this.auth) this.auth = new JadeUserAuthEntity();
         this.auth.handle_trusted = trusted;

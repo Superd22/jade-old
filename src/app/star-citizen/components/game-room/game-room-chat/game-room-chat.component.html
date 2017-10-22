@@ -1,0 +1,19 @@
+<div class="wrapper">
+  <mat-list dense class="messages">
+    <mat-list-item *ngFor="let msg of msgs">
+      <img matListAvatar [src]="msg.user.rsiAvatar">
+      <p matLine>
+        <span>{{msg.user.rsiHandle}} : </span> 
+        {{msg.text}}
+      </p>
+      <em matLine>{{msg.time}}</em>
+    </mat-list-item>
+  </mat-list>
+
+  <div class="actions">
+    <mat-form-field>
+      <input type="text" matInput placeholder="Tape ton message" [(ngModel)]="typingText">
+    </mat-form-field>
+    <button mat-button (click)="sendChat()">Envoyer</button>
+  </div>
+</div>

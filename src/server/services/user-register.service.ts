@@ -110,16 +110,26 @@ export class UserRegisterService {
      * @param forceUpdate 
      */
     public async setUserSCFRInfo(user: JadeUserEntity, forceUpdate?: boolean) {
+        // Check we have a token
         if (user.auth && user.auth.scfr_token) {
-            if (user.scfrId === 0 || forceUpdate) {
+            // Check if we need to update
+            if (!user.scfrId || forceUpdate) {
                 const scfrId = await Container.get(SCFRService).getIdentity(user);
 
-                console.log(scfrId);
-
-
+                // We're valid
                 if (scfrId && scfrId['data'] && scfrId['data']['user_id']) {
+                    // Check if someone had this id before
+                    const oldUser = await Container.get(DbService).repo(JadeUserEntity).findOne({ where: { scfrId: Number(scfrId['data']['user_id']) } });
+                    // Someone else had that info before, well no longer.
+                    if (oldUser && oldUser.id != user.id) await Container.get(SCFRService).userNoLongerValid(oldUser);
+
+                    // And finally update ourselves
                     user.scfrId = Number(scfrId['data']['user_id']);
                     await Container.get(DbService).repo(JadeUserEntity).persist(user);
+                }
+                // We're **not** valid
+                else {
+                    await Container.get(SCFRService).userNoLongerValid(user);
                 }
 
             }
@@ -137,9 +147,20 @@ export class UserRegisterService {
                 const discordId = await Container.get(DiscordService).getIdentity(user);
                 // We got what we wanted
                 if (discordId && discordId['username'] && discordId['id']) {
+
+                    // Check if someone had this id before
+                    const oldUser = await Container.get(DbService).repo(JadeUserEntity).findOne({ where: { discordId: discordId['id'] } });
+                    // Someone else had that info before, well no longer.
+                    if (oldUser && oldUser.id != user.id) await Container.get(DiscordService).userNoLongerValid(oldUser);
+
+                    // Update ourselves.
                     user.discordId = discordId['id'];
                     Container.get(DbService).repo(JadeUserEntity).persist(user).then((test) => console.log("done", test), (rejected) => console.log(rejected));
 
+                }
+                // Turns out our token isn't worth sh**
+                else {
+                    await Container.get(DiscordService).userNoLongerValid(user);
                 }
             }
         }
@@ -161,13 +182,17 @@ export class UserRegisterService {
 
         // Someone has this handle
         if (userWithHandle) {
-            if (userWithHandle.isRegistered) {
-                // The user that has this handle is authed, so you'd need to be him to ge this handle
-                throw "handle already used by authed player";
+            if (userWithHandle.auth && userWithHandle.auth.handle_trusted) {
+                // The user that has this handle verified it, so you'd need to be him to get his handle
+                if (userWithHandle.id === user.id) return user;
+                else throw "handle already used by authed player";
             }
-
-            // Whoever used this handle before didn't bother to auth, so we can assume you're the same guy.
-            return userWithHandle;
+            else if (userWithHandle.isRegistered) {
+                // The user with this handle is authed but didn't verify his handle, his loss.
+                userWithHandle.removeHandle();
+                await this.db.repo(JadeUserEntity).persist(userWithHandle);
+            }
+            else return userWithHandle; // Whoever used this handle before didn't bother to auth, so we can assume you're the same guy.
         }
 
         // No one has this handle, we can safely add it.
@@ -184,7 +209,7 @@ export class UserRegisterService {
      * @param handle 
      */
     public async handleExistsInDb(handle: string): Promise<JadeUserEntity> {
-        return await this.db.repo(JadeUserEntity).findOne({ rsiHandle: handle });
+        return await this.db.repo(JadeUserEntity).findOne({ where: { rsiHandle: handle }, relations: ['auth'] });
     }
 
     /**
