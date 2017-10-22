@@ -79,7 +79,7 @@ export class SCGameRoomController {
         this._wsGC.leaveRoom(user, hashId);
 
         // If we have no user, archive the group
-        if (group.players.length === 0) {
+        if (await group.playerCount() === 0) {
             await Container.get(SCGameRoomService).deleteGameRoom(group);
             return APIResponse.send(true);
         }

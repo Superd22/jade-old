@@ -32,7 +32,7 @@
     </mat-expansion-panel-header>
 
     <mat-action-row>
-      <button color="primary" mat-button routerLink="/LFM/criteres">{{lfm ? "Voir mon groupe" : "Créer un groupe"}}</button>
+      <button color="primary" mat-button [routerLink]="lfm ? 'GameRoom/'+lfm.hashId : '/LFM/criteres'">{{lfm ? "Voir mon groupe" : "Créer un groupe"}}</button>
       <button mat-button (click)="lf.leaveGroup()" *ngIf="lfm">Quitter le groupe</button>
 
     </mat-action-row>

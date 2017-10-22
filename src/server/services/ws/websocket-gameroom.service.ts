@@ -91,7 +91,7 @@ export class WSGameRoomService {
      */
     private isUser(socketOrUser: IJadeUser | SocketIO.Socket): boolean {
         // if join is defined, we're a socket.
-        return Boolean((<SocketIO.Socket>socketOrUser).join);
+        return !(typeof (<any>socketOrUser).join === 'function');
     }
 
     /**
