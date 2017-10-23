@@ -68,15 +68,12 @@ export class APISCLFMController {
      */
     @Patch("/game-room")
     public async createGameRoom( @CurrentUser() user: JadeUserEntity, @Body() room: ISCGameRoom) {
-        console.log("in");
         if (!this.sc.canLf(user)) return APIResponse.err("You need an handle to create a group...");
         if (user.group && user.group.isActive && !room.hashId) return APIResponse.err("you already have an active group");
         if (!this.sc.userCanEditRoom(user, room)) return APIResponse.err("you don't have the rights to edit this.");
 
 
-        console.log("done");
         const grp = await Container.get(SCGameRoomService).createGameRoom(user, room);
-        console.log("post", grp);
         return APIResponse.send(grp);
     }
 

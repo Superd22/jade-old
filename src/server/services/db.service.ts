@@ -104,13 +104,29 @@ export class DbService {
      * @param relations optional relations to fetch
      */
     public async buildNewOrGetExistingByHash<T={ hashId?: string }, DBEntity=any>(model: T, EntityType: new () => DBEntity, hashModule: string, relations?: (keyof DBEntity)[]): Promise<DBEntity> {
+        // Get our id
         const id = this.hashIds(hashModule).decode(model['hashId'])[0];
 
+        // Build our options
         const findOpt: FindOneOptions<DBEntity> = relations ? { relations: relations } : {};
 
+        // Try and find from the db with this id
         const fromDb = await this.repo(EntityType).findOneById(id, findOpt);
+
+
+        // If we didn't, no big deal, we just create a new one
         if (!fromDb) return this.buildEntity(model, EntityType);
-        else return Object.assign(fromDb, model);
+        // we did find something from the db
+        else {
+            // Merge what we got with what the user wanted to change
+            const entity: DBEntity = Object.assign({}, fromDb, model);
+            // ... but ensure our relations override everything
+            relations.map((relKey) => {
+                entity[relKey] = fromDb[relKey]
+            });
+
+            return entity;
+        }
     }
 
 }

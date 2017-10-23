@@ -42,10 +42,8 @@ export class JadeUserAuthEntity implements IJadeUserAuth {
      * @param refreshToken 
      */
     public setToken(provider: oAuthProviders, token: string, refreshToken?: string) {
-        console.log("setr", refreshToken, (refreshToken && refreshToken !== undefined));
         if (token) this[provider + "_token"] = token;
         if (refreshToken && refreshToken !== undefined) this[provider + "_token_refresh"] = refreshToken;
-        console.log(this);
     }
 
     /**

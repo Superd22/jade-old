@@ -1,7 +1,7 @@
 import { DbService } from './../services/db.service';
 import { Container } from 'typedi';
 import { AfterInsert } from 'typeorm';
-import { AfterLoad } from 'typeorm';
+import { AfterLoad, BeforeInsert, BeforeUpdate } from 'typeorm';
 /**
  * Describes a class 
  */
@@ -22,6 +22,8 @@ export abstract class HashIdEntity {
     /**
      * Returns the id computed from the hash
      */
+    @BeforeInsert()
+    @BeforeUpdate()
     public getIdFromHash() {
         if (!this.id && this.hashId)
             this.id = Container.get(DbService).hashIds(this._hashModuleName).decode(this.hashId)[0];

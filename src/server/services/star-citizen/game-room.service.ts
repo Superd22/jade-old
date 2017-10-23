@@ -39,10 +39,8 @@ export class SCGameRoomService {
      */
     public async createGameRoom(createdBy: IJadeUser, room: ISCGameRoom) {
         // Create the room
-        console.log("wzeow");
         let gameRoom: SCGameRoomEntity = await Container.get(DbService).buildNewOrGetExistingByHash(room, SCGameRoomEntity, "gameroom", ['players']);
         let updating = Boolean(gameRoom.id);
-        console.log("craeate", gameRoom);
         // Fetch user
         let user = await Container.get(DbService).repo(JadeUserEntity).findOneById(createdBy.id)
 
@@ -51,18 +49,12 @@ export class SCGameRoomService {
             gameRoom.createdBy = user;
             gameRoom.players = [user];
             gameRoom = await Container.get(DbService).repo(SCGameRoomEntity).persist(gameRoom);
-            console.log("about to set g", gameRoom);
             // The creator gets put in the room
             user.setGroup(gameRoom);
         }
         else await Container.get(DbService).repo(SCGameRoomEntity).persist(gameRoom);
 
         await Container.get(DbService).repo(JadeUserEntity).persist(user);
-
-        console.log("post everything")
-
-        // prevent circular
-        gameRoom.createdBy = <any>createdBy;
 
         if(updating) {
             this._wsGC.broadcastToRoom(gameRoom.hashId, "game-room-update", gameRoom);
