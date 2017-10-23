@@ -79,6 +79,7 @@ export class APISCLFGController {
         // Check we can
         if (!Container.get(SCCommonService).canLf(user)) return APIResponse.err("Need a handle to search for group/members");
         if (!body || !body.gameModes) return APIResponse.err("Need at least one game mode");
+        if (user.group) return APIResponse.err("Can't LFG when you're already in a group");
 
         user.lfg = user.lfg || new JadeLFGUserEntity();
         user.lfg = Object.assign(user.lfg, { ...body });

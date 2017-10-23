@@ -49,12 +49,17 @@ export class SCGameRoomService {
         if (!updating) {
             // If we're creating the room, set the creator
             gameRoom.createdBy = user;
+            gameRoom.players = [user];
+            gameRoom = await Container.get(DbService).repo(SCGameRoomEntity).persist(gameRoom);
+            console.log("about to set g", gameRoom);
             // The creator gets put in the room
             user.setGroup(gameRoom);
         }
+        else await Container.get(DbService).repo(SCGameRoomEntity).persist(gameRoom);
 
-        await Container.get(DbService).repo(SCGameRoomEntity).persist(gameRoom);
         await Container.get(DbService).repo(JadeUserEntity).persist(user);
+
+        console.log("post everything")
 
         // prevent circular
         gameRoom.createdBy = <any>createdBy;

@@ -9,7 +9,7 @@ import { Service } from "typedi";
 import { createConnection, Connection } from "typeorm";
 import { ReplaySubject } from "rxjs";
 import * as jwt from "jsonwebtoken";
-
+import * as safeJsonStringify from 'safe-json-stringify';
 export class APIResponse {
 
     /**
@@ -17,6 +17,7 @@ export class APIResponse {
      * @param data the data to send
      */
     public static ws<T>(data: T): T {
+        data = safeJsonStringify.ensureProperties(data);
         return APIResponse.checkIds(data);
     }
 
@@ -26,6 +27,7 @@ export class APIResponse {
      * @param msg the optional msg status
      */
     public static send<T=any>(data: T, msg = "OK"): IJadeAPIResponseSuccess<T> {
+        data = safeJsonStringify.ensureProperties(data);
         return { data: APIResponse.checkIds(data), msg: msg, error: false };
     }
 
@@ -35,6 +37,7 @@ export class APIResponse {
      * @param data optional data parameters
      */
     public static err<T>(msg: string, data?: T): IJadeAPIResponseError<T> {
+        data = safeJsonStringify.ensureProperties(data);
         return { data: APIResponse.checkIds(data), msg: msg, error: true };
     }
 

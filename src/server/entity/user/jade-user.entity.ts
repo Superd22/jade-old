@@ -114,9 +114,10 @@ export class JadeUserEntity extends HashIdEntity implements IJadeUser {
      * Removes the LFG status for this user
      */
     public async removeLFG() {
+        console.log("[JADEUSER] removing LFG");
         if (this.lfg) {
-            await Container.get(DbService).repo(JadeLFGUserEntity).remove(this.lfg);
             this.lfg = null;
+            await Container.get(DbService).repo(JadeLFGUserEntity).remove(this.lfg);
         }
     }
 
@@ -126,6 +127,7 @@ export class JadeUserEntity extends HashIdEntity implements IJadeUser {
      * @param group the group we want to go to
      */
     public async setGroup(group: SCGameRoomEntity) {
+        console.log("[JADEUSER] trying to set group");
         this.removeLFG();
         this.group = group;
     }

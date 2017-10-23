@@ -36,7 +36,7 @@ export class SCGameRoomEntity<gameModeId=number> extends HashIdEntity implements
     status: ISCGroupStatus = "pre";
 
     @OneToMany(type => JadeUserEntity, user => user.group)
-    players: JadeUserEntity[]
+    players: JadeUserEntity[] = [];
 
     @Column("datetime")
     createdAt = new Date();
@@ -83,9 +83,11 @@ export class SCGameRoomEntity<gameModeId=number> extends HashIdEntity implements
 
     /** the number of players currently in this group */
     public async playerCount() {
-        if (!this.players) this.players = (await Container.get(DbService).repo(SCGameRoomEntity).findOneById(this.id, { relations: ['players'] })).players;
-
-        return this.players.length;
+        if (!this.players) {
+            const that = (await Container.get(DbService).repo(SCGameRoomEntity).findOneById(this.id, { relations: ['players'] }));
+            this.players = that ? that.players : [];
+        }
+        return this.players ? this.players.length : 0;
     }
 
     /**
